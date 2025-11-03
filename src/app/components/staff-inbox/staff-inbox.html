@@ -1,0 +1,113 @@
+<div class="page">
+  <h2>Bekleyen Yazılar</h2>
+
+  <div class="filters">
+    <button (click)="setStatus(undefined)" [class.active]="status===undefined">Tümü</button>
+    <button (click)="setStatus(1)" [class.active]="status===1">Submitted</button>
+    <button (click)="setStatus(2)" [class.active]="status===2">InReview</button>
+  </div>
+
+  @if (loading()) {
+    <div>Yükleniyor…</div>
+  }
+  @else if (error) {
+    <div class="err">{{ error }}</div>
+  }
+
+  @else if (!loading() && items.length) {
+    <table class="table">
+      <thead class="table-dark">
+      <tr>
+        <th scope="col">Başlık</th>
+        <th scope="col">Durum</th>
+        <th scope="col">Son Güncelleme</th>
+        <th scope="col">İşlem</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of items; track item.id) {
+          <tr>
+            <th scope="row">{{item.title}}</th>
+            <td>
+              <button matButton disabled class="status-button"
+                      [class.s1]="item.status===1"
+                      [class.s2]="item.status===2"
+                      [class.s3]="item.status===3"
+                      [class.s4]="item.status===4"
+                      [class.s5]="item.status===5">
+               {{ statusText(item.status) }}
+             </button>
+            </td>
+            <td>{{ item.updatedAt | date:'short' }}</td>
+            <td>@if (item.status === 1) {
+              <button (click)="openAction(item.id,'review')" matButton>İncelemeye Al</button>
+            }
+              @if (item.status === 2) {
+                <button (click)="openAction(item.id,'approve')" matButton>Onayla</button>
+                <button (click)="openAction(item.id,'reject')" matButton>Reddet</button>
+                <button (click)="openAction(item.id,'revreq')" matButton>Düzeltme İste</button>
+              }</td>
+          </tr>
+
+          @if (actionForId === item.id) {
+            <div class="action-panel">
+              <form [formGroup]="actionForm" (ngSubmit)="submitAction()">
+                @switch (actionType) {
+                  @case ('review') {
+                    <label>İnceleme Notu <span class="req">*</span>
+                      <textarea rows="3" formControlName="note"></textarea>
+                    </label>
+                    @if (actionForm.get('note')?.touched && actionForm.get('note')?.invalid) {
+                      <div class="valerr">Lütfen en az 3 karakterlik bir not girin.</div>
+                    }
+                  }
+                  @case ('approve') {
+                    <label>Onay Notu (opsiyonel)
+                      <textarea rows="3" formControlName="note"></textarea>
+                    </label>
+                  }
+                  @case ('reject') {
+                    <label>Red Nedeni <span class="req">*</span>
+                      <textarea rows="3" formControlName="reason"></textarea>
+                    </label>
+                    @if (actionForm.get('reason')?.touched && actionForm.get('reason')?.invalid) {
+                      <div class="valerr">Red nedeni zorunludur (min 3 karakter).</div>
+                    }
+                  }
+                  @case ('revreq') {
+                    <label>Düzeltme Notu <span class="req">*</span>
+                      <textarea rows="3" formControlName="note"></textarea>
+                    </label>
+                    @if (actionForm.get('note')?.touched && actionForm.get('note')?.invalid) {
+                      <div class="valerr">Lütfen en az 3 karakterlik bir not girin.</div>
+                    }
+                  }
+                }
+
+                <div class="panel-actions">
+                  <button type="button" class="ghost" (click)="cancelAction()" [disabled]="submitting">İptal</button>
+                  <button type="submit" [disabled]="submitting || actionForm.invalid">
+                    {{ submitting ? 'Gönderiliyor...' : 'Gönder' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+        }
+      </tbody>
+    </table>
+
+  }
+
+  @else if (!loading() && !items.length) {
+    <div>Kayıt yok.</div>
+  }
+
+  @if (total>pageSize) {
+    <div class="pager" >
+      <button (click)="prev()" [disabled]="page===1">◀</button>
+      <span>Sayfa {{page}} / {{ totalPages }}</span>
+      <button (click)="next()" [disabled]="page>=totalPages">▶</button>
+    </div>
+  }
+</div>

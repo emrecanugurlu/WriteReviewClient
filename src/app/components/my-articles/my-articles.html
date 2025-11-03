@@ -1,0 +1,55 @@
+<div class="page">
+  <div style="display: flex; justify-content: right; padding-bottom: 20px">
+    <button style="border-radius: 8px" matButton="filled" (click)="addArticle()">Yazı Ekle
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="info">Yükleniyor...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (!loading() && !items.length) {
+    <div class="empty">Hiç yazınız yok.</div>
+  }
+
+  @if (!loading() && items.length) {
+
+    <table class="table table-hover table-bordered rounded" style="border-radius: 10px; padding: 10px">
+      <thead class="table-primary table-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Başlık</th>
+        <th scope="col">Durum</th>
+        <th scope="col">Son Güncelleme</th>
+        <th scope="col">Düzenle</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (item of items; track item.id) {
+          <tr>
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.title }}</td>
+            <td>
+              <button matButton [ngStyle]="{'background-color': getStatusInfo(item.status).color,
+                          'color': getStatusInfo(item.status).textColor}" style="border-radius: 10px;"
+                      disabled> {{ getStatusInfo(item.status).text }}
+              </button>
+            </td>
+            <td>{{ item.updatedAt | date:'mediumDate' }} {{ item.updatedAt | date:'shortTime' }}</td>
+            <td>
+              <button matButton="outlined" (click)="goUpdateArticle(item.id)">Düzenle</button>
+            </td>
+
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+

@@ -1,0 +1,173 @@
+.page {
+  max-width: 1500px;
+  margin: 24px auto;
+  padding: 0 12px;
+  font-family: system-ui, sans-serif
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px
+}
+
+.filters button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff
+}
+
+.filters .active {
+  background: #eef2ff;
+  border-color: #c7d2fe
+}
+
+
+.header, .row {
+  display: grid;
+  grid-template-columns:2fr 1fr 1fr 1.2fr;
+  gap: 12px;
+  padding: 12px 16px;
+  align-items: center
+}
+
+.header {
+  background: #f3f4f6;
+  font-weight: 600
+}
+
+.row {
+  border-top: 1px solid #eee
+}
+
+.actions button {
+  margin-right: 6px;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px
+}
+
+.err {
+  color: #c00
+}
+
+.pager {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px
+}
+
+.action-panel {
+  background: #f9fafb;
+  border-left: 4px solid #1d4ed8;
+  padding: 12px 16px;
+  border-radius: 0 0 12px 12px;
+  margin: -8px 12px 12px 12px;
+}
+
+.action-panel textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.panel-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.panel-actions .ghost {
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+.panel-actions button {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.req {
+  color: #dc2626;
+  margin-left: 4px;
+}
+
+.valerr {
+  color: #b91c1c;
+  font-size: .9rem;
+  margin-top: 4px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0 12px
+}
+
+.toolbar input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px
+}
+
+.chips button {
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff
+}
+
+.chips .active {
+  background: #eef2ff;
+  border-color: #c7d2fe
+}
+
+.status-button {
+  border-radius: 8px;
+}
+
+.s1 {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa
+}
+
+.s2 {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe
+}
+
+.s3 {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0
+}
+
+.s4 {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca
+}
+
+
+.s5 {
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe
+}
+
+

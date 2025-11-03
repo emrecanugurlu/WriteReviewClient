@@ -1,0 +1,59 @@
+.toolbar {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.toolbar-button {
+  margin-left: 30px;
+}
+
+.active-button {
+  color: azure;
+  background-color: darkslategrey;
+}
+
+.toolbar-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  max-width: 1500px;
+  padding: 0 16px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+
+button {
+  white-space: nowrap;
+  text-transform: none;
+  border-radius: 7px;
+  height: 36px;
+}
+
+@media (max-width: 768px) {
+  .toolbar-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-wrapper {
+    max-width: 100%;
+  }
+
+  button {
+    width: 100%;
+    justify-content: start;
+  }
+}
+
+

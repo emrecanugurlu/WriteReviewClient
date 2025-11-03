@@ -1,0 +1,34 @@
+<mat-toolbar color="primary" class="toolbar">
+  <div class="toolbar-content">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="menu_book" style="color: #cc0000; "></mat-icon>
+    <span class="logo" style="padding-right: 40px">Makale Tetkik</span>
+
+    @if (authService.isLoggedIn()) {
+      <a [routerLink]="['/my-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Yazılarım</button>
+      </a>
+    }
+
+    @if (authService.getUserRole() == "Admin") {
+      <a [routerLink]="['/staff/inbox']" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Gönderilen yazılar</button>
+      </a>
+    }
+
+    <span class="spacer"></span>
+    @if (authService.isLoggedIn()) {
+      <a routerLink="/profile">
+        <button mat-button>Profil
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="account_circle"></mat-icon>
+        </button>
+      </a>
+    } @else{
+      <a routerLink="/login">
+        <button mat-button >Giriş Yap
+          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="login"></mat-icon>
+        </button>
+      </a>
+    }
+  </div>
+</mat-toolbar>
+

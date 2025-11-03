@@ -1,0 +1,107 @@
+@if (loading()) {
+  <div>Yükleniyor</div>
+} @else {
+  <div class="page">
+    <header class="topbar" style="justify-content: right">
+      <div class="actions">
+        <button type="button" (click)="saveDraft()" matButton="outlined" style="border-radius: 10px">Taslağı Kaydet
+        </button>
+        <button type="button" [disabled]="form.invalid" matButton="filled">Yayıma Gönder</button>
+      </div>
+    </header>
+
+    @if (ok) {
+
+    }
+    @if (error) {
+      <p style="color:#0a0;">Taslak kaydedildi.</p>
+      <p style="color:#c00;">{{ error }}</p>
+    }
+
+
+
+
+
+    <form [formGroup]="form" class="grid">
+      <section class="card main">
+        <label>Başlık
+          <input formControlName="title" placeholder="Örn: Mikroservislerde Gözlemlenebilirlik"/>
+        </label>
+
+        <label>Özet
+          <textarea formControlName="summary" rows="3" placeholder="Kısa bir özet..."></textarea>
+        </label>
+
+        <label>İçerik
+          <textarea formControlName="content" rows="12" placeholder="Makale içeriği..."></textarea>
+        </label>
+
+        <div class="meta-row">
+          <span>Kelime: {{ wordCount }}</span>
+          @if (form.invalid) {
+            <span class="muted">Kaydetmek için zorunlu alanları doldur.</span>
+          }
+        </div>
+      </section>
+
+      <aside class="card side">
+        <label>Kategori
+          <select formControlName="categoryId">
+            <option [ngValue]="null">Seçin…</option>
+            @for (c of categories; track c.id) {
+              <option [ngValue]="c.id">{{ c.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label>Etiketler (virgülle ayırın)
+          <input formControlName="tags" placeholder="angular, jwt, ef-core"/>
+        </label>
+
+        <label>Kapak Görseli (opsiyonel)
+          <input type="file" (change)="onFile($event)"/>
+        </label>
+      </aside>
+    </form>
+  </div>
+
+  <hr style="margin:16px 0;">
+
+  <h3>Review Geçmişi</h3>
+
+  @if (!reviews.length) {
+    <div style="opacity:.7">Henüz geçmiş yok.</div>
+  }
+
+  @if (reviews.length) {
+    <div class="card">
+      <div class="card-body">
+        <ol style="list-style:none;padding:0;margin:0">
+          @for (r of reviews; track r.id) {
+            <li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:#1d4ed8;margin-top:6px"></div>
+              <div style="flex:1">
+                <div style="font-weight:600">
+                  {{ actionText(r.action) }}
+                  <span style="opacity:.7">({{ statusText(r.fromStatus) }} → {{ statusText(r.toStatus) }})</span>
+                </div>
+                <div style="font-size:.9rem;opacity:.8">{{ r.createdAt | date:'medium' }}</div>
+                @if (r.note) {
+                  <div style="margin-top:4px"><b>Not:</b> {{ r.note }}</div>
+                }
+                @if (r.reason) {
+                  <div style="margin-top:4px"><b>Red Nedeni:</b> {{ r.reason }}</div>
+                }
+                <div style="margin-top:4px;opacity:.7;font-size:.9rem">Reviewer: {{ r.reviewerId }}</div>
+              </div>
+            </li>
+          }
+        </ol>
+      </div>
+    </div>
+
+  }
+}
+
+
+
