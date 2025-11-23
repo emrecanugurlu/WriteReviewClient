@@ -1,0 +1,50 @@
+/* Font Ayarları */
+:host {
+  font-family: 'Inter', sans-serif;
+}
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Animasyonlar */
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Angular Material Editorial Overrides */
+:host ::ng-deep .editorial-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
+  background-color: #1c1917 !important;
+  border-color: #1c1917 !important;
+}
+
+:host ::ng-deep .editorial-spinner circle {
+  stroke: #1c1917 !important;
+}
+
+/* Scrollbar Özelleştirme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}

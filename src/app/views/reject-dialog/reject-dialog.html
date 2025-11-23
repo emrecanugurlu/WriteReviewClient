@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Makaleyi Reddet</h2>
+<mat-dialog-content  >
+  <p>Red Nedeni</p>
+  <mat-form-field style="min-width: 500px">
+    <mat-label>Örn. Makale kelime sayısı fazla</mat-label>
+    <textarea matInput  [(ngModel)] = "reason"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton (click)="onNoClick()">İptal</button>
+  <button matButton  cdkFocusInitial (click)="rejectArticle(articleId(),reason())">Tamam</button>
+</mat-dialog-actions>
