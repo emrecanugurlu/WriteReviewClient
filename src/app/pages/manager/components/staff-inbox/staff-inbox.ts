@@ -1,12 +1,13 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
-import {PageResult} from '../../entities/interfaces/page-result';
-import {ArticleService} from '../../services/article/article-service';
+import {PageResult} from '../../../../entities/interfaces/page-result';
+import {ArticleService} from '../../../../services/article/article-service';
 import {DatePipe} from '@angular/common';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {debounceTime, distinctUntilChanged} from 'rxjs';
 import {MatButton} from '@angular/material/button';
 import {MatDialog} from '@angular/material/dialog';
-import SetExpertsDialog from '../../views/set-experts-dialog/set-experts-dialog';
+import SetExpertsDialog from '../../../../views/set-experts-dialog/set-experts-dialog';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-staff-inbox',
@@ -36,6 +37,7 @@ export default class StaffInbox implements OnInit {
   actionType: 'review' | 'approve' | 'reject' | 'revreq' | null = null;
   actionForm!: FormGroup;
   submitting = false;
+  router = inject(Router);
 
   constructor(private api: ArticleService) {
   }
@@ -77,6 +79,10 @@ export default class StaffInbox implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  articleDetail(id: number) {
+    this.router.navigate(['/article-detail',id]).then(r => {});
   }
 
   openAction(id: string, type: 'review'|'approve'|'reject'|'revreq'){

@@ -73,7 +73,7 @@ export default class NewArticle {
         next: _res => {
           this.ok.set(true);
           this.loading.set(false);
-          this._snackbar.open("Tasklak Kaydedildi","Kapat",{
+          this._snackbar.open(_res.message,"Kapat",{
             duration: 5000,
           })
           },

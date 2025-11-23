@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth-service';
@@ -18,24 +18,44 @@ export class Login{
   email = '';
   password = '';
 
-  loading = false;
-  error = '';
-  ok = false;
+  loading = signal(false);
+  error = signal("");
+  ok = signal(false);
   authService: AuthService = inject(AuthService);
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login() {
-    this.error = ''; this.ok = false; this.loading = true;
+    this.error.set("");
+    this.ok.set(false);
+    this.loading.set(true);
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
-        this.ok = true;
-        this.loading = false;
+        this.ok.set(true);
+        this.loading.set(false);
         console.log(this.tokenService.getToken());
-        this.router.navigate(['/my-articles'],{replaceUrl:true}).then(r => {});
+        const role = this.authService.getUserRole()
+        const defaultRoute = this.getDefaultRouteForRole(role)
+        this.router.navigate([defaultRoute],{replaceUrl:true}).then(r => {});
         },
-      error: (e) => { this.error = 'Giriş başarısız'; this.loading = false; console.error(e); }
+      error: (e) => {
+        this.error.set('Giriş başarısız');
+        this.loading.set(false);
+        console.error(e); }
     });
+  }
+
+  private getDefaultRouteForRole(role: string | null): string {
+    switch (role) {
+      case 'Admin':
+        return '/admin';
+      case 'Manager':
+        return '/staff/inbox';
+      case 'Expert':
+        return 'assigned-articles';
+      default:
+        return '/my-articles';
+    }
   }
 
 }

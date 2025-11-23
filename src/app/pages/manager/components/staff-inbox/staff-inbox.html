@@ -3,8 +3,10 @@
 
   <div class="filters">
     <button (click)="setStatus(undefined)" [class.active]="status===undefined">Tümü</button>
-    <button (click)="setStatus(1)" [class.active]="status===1">Submitted</button>
-    <button (click)="setStatus(2)" [class.active]="status===2">InReview</button>
+    <button (click)="setStatus(1)" [class.active]="status===1">Gönderilen</button>
+    <button (click)="setStatus(2)" [class.active]="status===2">İncelemede</button>
+    <button (click)="setStatus(4)" [class.active]="status===4">Reddedildi</button>
+
   </div>
 
   @if (loading()) {
@@ -15,18 +17,17 @@
   }
 
   @else if (!loading() && items.length) {
-    <table class="table">
+    <table class="table table-hover">
       <thead class="table-dark">
       <tr>
         <th scope="col">Başlık</th>
         <th scope="col">Durum</th>
         <th scope="col">Son Güncelleme</th>
-        <th scope="col">İşlem</th>
       </tr>
       </thead>
       <tbody>
         @for (item of items; track item.id) {
-          <tr>
+          <tr (click)="articleDetail(item.id)">
             <th scope="row">{{item.title}}</th>
             <td>
               <button matButton disabled class="status-button"
@@ -39,14 +40,6 @@
              </button>
             </td>
             <td>{{ item.updatedAt | date:'short' }}</td>
-            <td>@if (item.status === 1) {
-              <button (click)="openAction(item.id,'review')" matButton>İncelemeye Al</button>
-            }
-              @if (item.status === 2) {
-                <button (click)="openAction(item.id,'approve')" matButton>Onayla</button>
-                <button (click)="openAction(item.id,'reject')" matButton>Reddet</button>
-                <button (click)="openAction(item.id,'revreq')" matButton>Düzeltme İste</button>
-              }</td>
           </tr>
 
           @if (actionForId === item.id) {

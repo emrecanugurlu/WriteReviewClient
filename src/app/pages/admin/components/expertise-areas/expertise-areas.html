@@ -1,0 +1,24 @@
+
+<div style="display:flex; justify-content: right; margin-bottom: 20px">
+  <button matButton="filled" (click)="opeAddDialog()"><mat-icon>add</mat-icon>Ekle</button>
+</div>
+
+<table class="table">
+  <thead>
+  <tr class="table-dark">
+    <th scope="col" >Id</th>
+    <th scope="col">Name</th>
+    <th scope="col">İşlem</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (data of expertiseAreas(); track data.id){
+      <tr>
+        <th >{{data.id}}</th>
+        <td>{{data.name}}</td>
+        <td><button matButton="outlined" style="margin-right: 5px"><mat-icon>edit</mat-icon>Düzenle</button>
+        <button matButton="outlined" style="color: #cc0000"><mat-icon>delete</mat-icon>Sil</button></td>
+      </tr>
+    }
+  </tbody>
+</table>

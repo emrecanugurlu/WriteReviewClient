@@ -18,20 +18,19 @@ import {MatIcon} from '@angular/material/icon';
   templateUrl: './my-articles.html',
   styleUrl: './my-articles.scss'
 })
-export class MyArticles implements OnInit {
+export class MyArticles {
 
   api = inject(ArticleService)
   loading = signal(false);
-  error: string = "";
-  page = 1; pageSize = 10; total = 0;
+  error = signal("");
+  page = 1;
+  pageSize = 10;
+  total = 0;
   items: ArticleListItem[] = [];
   router = inject(Router);
 
   get totalPages() { return Math.max(1, Math.ceil(this.total / this.pageSize)); }
 
-  ngOnInit() {
-
-  }
   constructor() {
     this.load();
   }
@@ -41,13 +40,16 @@ export class MyArticles implements OnInit {
 
   load() {
     this.loading.set(true);
-    this.error = '';
+    this.error.set("");
     this.api.getMine(this.page, this.pageSize).subscribe({
       next: r => {
         this.loading.set(false);
         this.items = r.items;
       },
-      error: e => { this.error = 'Liste alınamadı'; this.loading.set(false); console.error(e); }
+      error: e => {
+        this.error.set('Liste alınamadı');
+        this.loading.set(false); console.error(e);
+      }
     });
   }
 

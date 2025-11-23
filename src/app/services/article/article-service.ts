@@ -7,6 +7,7 @@ import {PageResult} from '../../entities/interfaces/page-result';
 import {ArticleListItem} from '../../entities/interfaces/article-list-item';
 import {StaffArticleListItem} from '../../entities/interfaces/staff-article-list-item';
 import {ArticleReview} from '../../entities/interfaces/article-review';
+import {AddArticleResponse} from '../../dto/add-article-response';
 
 export enum ArticleStatus { Draft=0, Submitted, InReview, Approved, Rejected, RevisionsRequested }
 
@@ -18,14 +19,18 @@ export class ArticleService {
 
   http = inject(HttpClient);
 
-  //Veritabanından yazara ait yazıları pagination kullanarak çekmek için kullanılan fonksiyon.
+  /**
+   * Veritabanından yazara ait yazıları pagination kullanarak çekmek için kullanılan fonksiyon.
+   * @param page
+   * @param pageSize
+   */
   getMine(page = 1, pageSize = 10): Observable<PageResult<ArticleListItem>> {
     return this.http.get<PageResult<ArticleListItem>>('/api/articles/mine?page=' + page + '&pageSize=' + pageSize);
   }
 
   //Veritabanını taslak kaydetmek için kullanılan fonksiyon.
   createArticle(body : {articleDto: CreateDraftDto, isSubmit: Boolean}) {
-    return this.http.post<ArticleDto>('/api/articles', body);
+    return this.http.post<AddArticleResponse>('/api/articles', body);
   }
 
   getArticleWithId(articleId:string){
@@ -50,7 +55,7 @@ export class ArticleService {
   }
 
   reject(id: string,body: { reason: string }) {
-    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/reject`, {});
+    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/reject`, body);
   }
 
   requestRevision(id: string,body: { note: string }) {

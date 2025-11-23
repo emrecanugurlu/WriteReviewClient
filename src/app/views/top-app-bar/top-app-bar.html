@@ -1,30 +1,41 @@
 <mat-toolbar color="primary" class="toolbar">
   <div class="toolbar-content">
-    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="menu_book" style="color: #cc0000; "></mat-icon>
-    <span class="logo" style="padding-right: 40px">Makale Tetkik</span>
+    <span style="padding-right: 40px; font-size: 24px; font-weight: bold; color: #555555">Makale Tetkik</span>
 
-    @if (authService.isLoggedIn()) {
+    @if (authService.isLoggedIn() && authService.getUserRole() != "Admin") {
       <a [routerLink]="['/my-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
         <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Yazılarım</button>
       </a>
     }
 
-    @if (authService.getUserRole() == "Admin") {
+    @if (authService.getUserRole() == "Manager") {
       <a [routerLink]="['/staff/inbox']" routerLinkActive="active-link" #rla="routerLinkActive">
         <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Gönderilen yazılar</button>
       </a>
     }
 
+    @if (authService.getUserRole() == "Admin") {
+      <a [routerLink]="['/admin']" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Admin Panel</button>
+      </a>
+    }
+
+    @if (authService.isLoggedIn() && authService.getUserRole() == "Expert") {
+      <a [routerLink]="['/assigned-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">İncelenecek Yazılar</button>
+      </a>
+    }
+
     <span class="spacer"></span>
     @if (authService.isLoggedIn()) {
-      <a routerLink="/profile">
-        <button mat-button>Profil
+      <a routerLink="/profile" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button  [ngClass]="{'active-button': rla.isActive}" class="btn btn-light" matButton>Profil
           <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="account_circle"></mat-icon>
         </button>
       </a>
-    } @else{
-      <a routerLink="/login">
-        <button mat-button >Giriş Yap
+    } @else {
+      <a routerLink="/login" routerLinkActive="active-link" #rla="routerLinkActive">
+        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light" matButton>Giriş Yap
           <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="login"></mat-icon>
         </button>
       </a>

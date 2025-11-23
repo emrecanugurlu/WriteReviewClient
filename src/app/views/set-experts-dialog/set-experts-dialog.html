@@ -1,53 +1,62 @@
 <mat-dialog-content style="min-height: 300px;padding: 50px; width: 500px">
   <h3 style="margin-bottom: 15px">Uzman Ataması Yap </h3>
-  <mat-form-field style="width: max(100%, 100%)">
-    <mat-label>Kategori Seç</mat-label>
-    <mat-select (selectionChange)="setCategory($event)">
-      @for (expertiseArea of expertiseAreas(); track expertiseArea.id){
-        <mat-option [value]="expertiseArea.name">{{expertiseArea.name}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  <section style="margin-top: 5px">
-    <mat-form-field style="width: max(100%, 100%)">
-      <mat-label>Not (İsteğe Bağlı)</mat-label>
-      <textarea matInput></textarea>
-    </mat-form-field>
-  </section>
-  <h4>Uzmanlar</h4>
+  <form [formGroup]="form">
+    <div formArrayName="expertiseAreas">
+      <mat-form-field style="width: max(100%, 100%)">
+        <mat-label>Kategori Seç</mat-label>
+        <mat-select (selectionChange)="setCategory($event)">
+          @for (expertiseArea of expertiseAreas(); track expertiseArea.id; let areaIndex = $index) {
 
-  @if (selectedExpertiseName() == ""){
-    <div class="alert alert-secondary" role="alert">
-      Uzmanları görüntüleyebilmek için kategori seçin...
-    </div>
-  } @else {
-    <section>
-      @for (expertiseArea of expertiseAreas(); track expertiseArea.id){
+              <mat-option [value]="expertiseArea.name">{{ expertiseArea.name }}</mat-option>
 
-          @if (expertiseArea.name == selectedExpertiseName()) {
-            @if (expertiseArea.users.length == 0) {
-              <div class="alert alert-danger" role="alert">
-                Bu kategoride uzman bulunamadı...
-              </div>
-            } @else {
-              @for (user of expertiseArea.users;track user.id){
-                <mat-checkbox style="display: block"
-                              [checked]="isSelectExpert()"
-                              (change)="setIsSelectExpert()"
-                >
-                  {{user.name}}
-                </mat-checkbox>
-              }
-            }
           }
-      }
-    </section>
-  }
+        </mat-select>
+      </mat-form-field>
+      <section style="margin-top: 5px">
+        <mat-form-field style="width: max(100%, 100%)">
+          <mat-label>Not (İsteğe Bağlı)</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </section>
+      <h4>Uzmanlar</h4>
+      @if (selectedExpertiseName() == "") {
+        <div class="alert alert-secondary" role="alert">
+          Uzmanları görüntüleyebilmek için kategori seçin...
+        </div>
+      } @else {
 
+        @for (expertiseArea of expertiseAreas(); track expertiseArea.id; let areaIndex = $index) {
+          @if (expertiseArea.name == selectedExpertiseName()) {
+           <div [formGroupName]="areaIndex">
+             <div formArrayName="users">
+               @if (expertiseArea.users.length == 0) {
+                 <div class="alert alert-danger" role="alert">
+                   Bu kategoride uzman bulunamadı...
+                 </div>
+               } @else {
+
+                 @for (user of expertiseArea.users; track user.id; let userIndex = $index) {
+                     <mat-checkbox [formControlName]="userIndex" style="display: block"
+                                   [checked]="isSelectExpert()"
+                     >
+                       {{ user.name }}
+                     </mat-checkbox>
+                 }
+               }
+             </div>
+           </div>
+
+          }
+        }
+
+      }
+    </div>
+  </form>
 </mat-dialog-content>
+
 
 <mat-dialog-actions>
   <button matButton style="color: #cc0000;" (click)="closeDialog()">İptal</button>
-  <button matButton >Gönder</button>
+  <button matButton (click)="addArticleExpert()">Gönder</button>
 </mat-dialog-actions>
 

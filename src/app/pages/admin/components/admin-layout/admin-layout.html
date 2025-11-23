@@ -1,0 +1,34 @@
+<mat-sidenav-container class="admin-container">
+
+  <mat-sidenav #sidenav mode="side" opened class="admin-sidenav">
+    <div class="logo-container">
+      LOGO
+    </div>
+
+    <mat-nav-list>
+      <button matButton routerLink="dashboard" style="width: 100%; justify-content: left"><mat-icon>dashboard</mat-icon>Dashboard</button>
+      <button matButton routerLink="users" style="width: 100%; justify-content: left"><mat-icon>group</mat-icon>Kullanıcı Yönetimi</button>
+      <button matButton routerLink="articles" style="width: 100%; justify-content: left"><mat-icon>article</mat-icon>Makale Yönetimi</button>
+      <button matButton routerLink="expertise-areas" style="width: 100%; justify-content: left"><mat-icon>gamepad_circle_right</mat-icon>Uzmanlık Alanları</button>
+      <button matButton routerLink="dashboard" style="width: 100%; justify-content: left"><mat-icon><span class="material-symbols-outlined">recent_actors</span></mat-icon>Rol Yönetimi</button>
+      <button matButton routerLink="dashboard" style="width: 100%; justify-content: left"><mat-icon>settings</mat-icon>Ayarlar</button>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="admin-content">
+
+    <mat-toolbar color="primary">
+      <span>Admin Panel</span>
+      <span class="spacer"></span>
+      <button mat-icon-button>
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="content-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
