@@ -5,7 +5,7 @@ import {CreateDraftDto} from '../../dto/create-draft-dto';
 import {ArticleDto} from '../../dto/article-dto';
 import {PageResult} from '../../entities/interfaces/page-result';
 import {ArticleListItem} from '../../entities/interfaces/article-list-item';
-import {StaffArticleListItem} from '../../entities/interfaces/staff-article-list-item';
+import {ManagerArticleListItem} from '../../entities/interfaces/manager-article-list-item';
 import {ArticleReview} from '../../entities/interfaces/article-review';
 import {AddArticleResponse} from '../../dto/add-article-response';
 
@@ -43,23 +43,23 @@ export class ArticleService {
       pageSize: String(pageSize),
       ...(status !== undefined ? { status: String(status) } : {})
     }).toString();
-    return this.http.get<PageResult<StaffArticleListItem>>(`/api/staffs/articles?${q}`);
+    return this.http.get<PageResult<ManagerArticleListItem>>(`/api/managers/articles?${q}`);
   }
 
   takeToReview(id: string,body?: { note?: string | null }) {
-    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/review`, {});
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/review`, {});
   }
 
   approve(id: string,body?: { note?: string | null }) {
-    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/approve`, {});
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/approve`, {});
   }
 
   reject(id: string,body: { reason: string }) {
-    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/reject`, body);
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/reject`, body);
   }
 
   requestRevision(id: string,body: { note: string }) {
-    return this.http.post<{ id: string; status: number }>(`/api/staff/articles/${id}/request-revision`, {});
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/request-revision`, {});
   }
 
   getReviews(articleId: string) {
