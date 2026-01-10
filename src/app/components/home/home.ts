@@ -8,7 +8,8 @@ import {Login} from '../../pages/common/login/login';
 @Component({
   selector: 'app-home',
   imports: [
-    Login,
+    RouterOutlet,
+
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
