@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 font-sans text-gray-800">
+      
+      <div class="w-full max-w-md">
+
+        <!-- PROFİL KARTI -->
+        <div class="rounded-2xl bg-white p-8 text-center shadow-lg ring-1 ring-gray-100">
+          
+          @if (!isEditing()) {
+            <!-- Görüntüleme Modu -->
+            <div class="flex flex-col items-center animate-fade-in">
+              
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ user().name }}</h1>
+              
+              <!-- Rol ve Ünvan Alanı -->
+              <div class="flex flex-col items-center gap-2">
+                <!-- Rol Badge'i (YENİ) -->
+                <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
+                  {{ user().role }}
+                </span>
+                
+                <!-- Mevcut Ünvan -->
+                <p class="text-gray-500 font-medium">{{ user().title }}</p>
+              </div>
+              
+              <div class="mt-6 w-12 h-1 bg-indigo-100 rounded-full"></div>
+
+              <p class="mt-6 text-gray-500 leading-relaxed">{{ user().bio }}</p>
+
+              <!-- Makale Sayısı -->
+              <div class="mt-6 inline-flex items-center rounded-xl bg-gray-50 px-4 py-2 ring-1 ring-gray-200/50">
+                <span class="text-2xl font-bold text-gray-900 mr-2">{{ user().articleCount }}</span>
+                <span class="text-sm font-medium text-gray-500">Toplam Makale</span>
+              </div>
+
+              <!-- Butonlar -->
+              <div class="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+                <button 
+                  (click)="toggleEdit()" 
+                  class="inline-flex flex-1 items-center justify-center rounded-3 border border-gray-200 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:text-indigo-600 hover:border-indigo-200 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  Düzenle
+                </button>
+
+                <button 
+                  (click)="logout()"
+                  class="inline-flex flex-1 items-center justify-center rounded-3 bg-red-50 px-6 py-2.5 text-sm font-medium text-red-600 hover:bg-red-100 transition-all focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Çıkış Yap
+                </button>
+              </div>
+
+            </div>
+          } @else {
+            <!-- Düzenleme Modu -->
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="text-left animate-fade-in">
+              <div class="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+                <h3 class="text-lg font-bold text-gray-900">Profili Düzenle</h3>
+                <button type="button" (click)="toggleEdit()" class="text-gray-400 hover:text-gray-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="space-y-5">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">İsim Soyisim</label>
+                  <input type="text" formControlName="name" class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors">
+                </div>
+                
+                <!-- Rol Düzenleme Alanı (YENİ) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Kullanıcı Rolü</label>
+                  <select formControlName="role" class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors bg-white">
+                    <option value="Yazar">Yazar</option>
+                    <option value="Editör">Editör</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Okur">Okur</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Ünvan</label>
+                  <input type="text" formControlName="title" class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Biyografi</label>
+                  <textarea formControlName="bio" rows="4" class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors resize-none"></textarea>
+                  <p class="mt-1 text-xs text-gray-400 text-right">Maksimum 200 karakter</p>
+                </div>
+              </div>
+
+              <div class="mt-8 flex justify-end space-x-3">
+                <button type="button" (click)="toggleEdit()" class="rounded-3 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">İptal</button>
+                <button type="submit" class="rounded-lg bg-indigo-600 px-6 py-2 text-sm font-medium text-white hover:bg-indigo-700 shadow-sm transition-colors focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Kaydet</button>
+              </div>
+            </form>
+          }
+        </div>
+
+      </div>
+    </div>

@@ -4,4 +4,7 @@ export interface ArticleListItem{
   title: string,
   status: number,
   updatedAt: string,
+  category: string,
+  tags: Array<string>,
+  summary: string,
 }
