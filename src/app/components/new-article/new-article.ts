@@ -52,7 +52,6 @@ export default class NewArticle {
   }
 
   saveArticle(isSubmit: Boolean) {
-    /*
     this.ok.set(false);
     this.error = '';
     this.loading.set(true);
@@ -80,7 +79,7 @@ export default class NewArticle {
           },
         error: err => { this.error = 'Kaydetme sırasında hata oluştu.'; this.loading.set(false); console.error(err); }
     })
-*/
+
   }
 
   private parseTags(raw: string): string[] {

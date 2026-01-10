@@ -95,7 +95,6 @@ export class UpdateArticle {
 
 
   saveDraft() {
-    /*
     this.ok = false;
     this.error = '';
     this.loading.set(true);
@@ -124,9 +123,7 @@ export class UpdateArticle {
       },
       error: err => { this.error = 'Kaydetme sırasında hata oluştu.'; this.loading.set(false); console.error(err); }
     })
- */
+
   }
-
-
 
 }

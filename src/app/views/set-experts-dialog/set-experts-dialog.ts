@@ -1,175 +1,143 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, inject, model, OnInit, signal, WritableSignal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogContent, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Expert } from '../../services/expert';
-import { ExpertDto } from '../../dto/experts-dto';
-import { AssignExpertsDto } from '../../dto/assign-experts-dto';
+import {Component, inject, model, OnInit, signal, WritableSignal} from '@angular/core';
+import {MatFormField} from '@angular/material/form-field';
+import {MatLabel} from '@angular/material/form-field';
+import {MatOption, MatSelect, MatSelectChange} from '@angular/material/select';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDialogRef} from '@angular/material/dialog';
+import {MatButton} from '@angular/material/button';
+import {MatInput} from '@angular/material/input';
+import {ExpertiseArea} from '../../services/expertise-area/expertise-area';
+import {ExpertiseAreaWithUsersDto} from '../../dto/expertise-area-with-users-dto';
+import {Expert} from '../../services/expert';
+import {AddArticleExpertDTO} from '../../dto/add-article-expert-dto';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-set-experts-dialog',
   imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatCheckbox,
+    MatOption,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    MatInput,
+    ReactiveFormsModule
   ],
   templateUrl: './set-experts-dialog.html',
   styleUrl: './set-experts-dialog.scss'
 })
-export default class SetExpertsDialog {
-
-  dialogRef = inject(MatDialogRef<SetExpertsDialog>);
+export default class SetExpertsDialog implements OnInit {
+  expertiseAreaService = inject(ExpertiseArea)
   expertService = inject(Expert);
-  experts = signal<ExpertDto[]>([]);
-  loading = signal(false);
-  error = signal("");
-  ok = signal(false);
-  selectedExpertIds = signal<string[]>([]);
+  dialogRef = inject(MatDialogRef<SetExpertsDialog>);
+
+  isSelectExpert = signal(false);
+
+  form!: FormGroup;
+  fb = inject(FormBuilder);
+
+
+  expertiseAreas:WritableSignal<ExpertiseAreaWithUsersDto[]> = signal([]);
+  selectedExpertiseName: WritableSignal<string> = signal("");
   readonly data = inject(MAT_DIALOG_DATA);
-  readonly articleId = model(this.data.articleId as string);
+  readonly articleId = model(this.data.articleId);
 
-  searchQuery = signal('');
-  resetPagination() {
-    this.currentPage.set(1);
-  }
-  selectedSpecialty = signal<string | null>(null);
-
-
-get uniqueSpecialties(): string[] {
-  const expertsValue = this.experts(); // Signal'in değerini al
-  
-  // Array kontrolü yap
-  if (!Array.isArray(expertsValue)) {
-    console.log('experts is not an array:', expertsValue);
-    return [];
-  }
-  
-  const allAreas = expertsValue.flatMap(e => e.expertiseAreas || []);
-  return [...new Set(allAreas)].sort();
-}
-  
-  setSpecialtyFilter(specialty: string | null) {
-    this.selectedSpecialty.set(specialty);
-    this.resetPagination();
-  }
-
-
-  isSelected(id: string): boolean {
-    return this.selectedExpertIds().includes(id);
-  }
-
-
-  Math = Math;
-
-  filters = {
-    search: signal(''),
-    expertise: signal('')
-  };
-
-
-  showSuccessToast = signal(false);
-  selectedCountForToast = 0;
-
-  currentPage = signal(1);
-  itemsPerPage = 4;
-  pageSize = signal(4);
-
-  totalPages = computed(() => Math.ceil(this.filteredExperts().length / this.pageSize()));
-
-  paginatedExperts = computed(() => {
-    const startIndex = (this.currentPage() - 1) * this.pageSize();
-    const endIndex = startIndex + this.pageSize();
-    return this.filteredExperts().slice(startIndex, endIndex);
-  });
 
   constructor() {
-    this.loading.set(true);
-    this.expertService.getAllExperts().subscribe({
-      next: (result) => {
-        this.loading.set(false);
-        this.ok.set(true);
-        console.log('Uzmanlar yüklendi:', result);
-        this.experts.set(result);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set("Error: " + err.message);
-        console.error('Uzmanlar yüklenirken hata oluştu:', err);
-      }
+    this.form = this.fb.group({
+      expertiseAreas: this.fb.array([]),
     });
   }
 
-  assignExperts(assignExpertsDto: AssignExpertsDto){
-    this.expertService.addArticleExperts({
-      articleId: assignExpertsDto.articleId,
-      expertsId: assignExpertsDto.expertIds
-    }).subscribe({
-      next: (result) => {
-        console.log('Uzmanlar atandı:', result);
-        this.selectedCountForToast = assignExpertsDto.expertIds.length;
-        this.showSuccessToast.set(true);  
+  ngOnInit(): void {
+    this.expertiseAreaService.getAllExpertiseAreaWithUsers().subscribe(
+      {
+        next: (res) => {
+          this.expertiseAreas.set(res)
+          this.buildForm(this.expertiseAreas())
         },
-        error: (err) => {
-          console.error('Uzmanlar atanırken hata oluştu:', err);
+        error: _ =>{
+          console.log(_);
         }
-  })};
+      }
+    )
 
-  filteredExperts = computed(() => {
-    const query = this.searchQuery().toLowerCase();
-    const specialty = this.selectedSpecialty();
+    }
 
-    return this.experts().filter(expert => {
-      // 1. Search Filter
-      const matchesSearch = expert.name.toLowerCase().includes(query) ||
-        expert.expertiseAreas[0].toLowerCase().includes(query);
+  private buildForm(areas: ExpertiseAreaWithUsersDto[]): void {
+    const areaFormGroups = areas.map(area =>
+      this.fb.group({
+        areaId: this.fb.control(""),
+        users: this.fb.array(area.users.map(() => this.fb.control(false)))
+      })
+    );
 
-      // 2. Specialty Filter
-      const matchesSpecialty = specialty ? expert.expertiseAreas[0] === specialty : true;
+    const expertiseAreasArray = this.fb.array(areaFormGroups);
+    this.form.setControl('expertiseAreas', expertiseAreasArray);
 
-      return matchesSearch && matchesSpecialty;
+  }
+
+  get expertiseAreasFormArray(): FormArray {
+    return this.form.get('expertiseAreas') as FormArray;
+  }
+
+  getUsersFormArray(areaIndex: number): FormArray {
+    return (this.expertiseAreasFormArray.at(areaIndex) as FormGroup).get('users') as FormArray;
+  }
+
+  getSelectedPairs(): { expertiseAreaId: string; userId: string }[] {
+    const result: { expertiseAreaId: string; userId: string }[] = [];
+    const areas = this.expertiseAreas();
+
+    this.expertiseAreasFormArray.controls.forEach((areaGroup, areaIndex) => {
+      const usersArray = (areaGroup as FormGroup).get('users') as FormArray;
+
+      usersArray.controls.forEach((control, userIndex) => {
+        if (control.value) {
+          const area = areas[areaIndex];
+          const eaUser = area.users[userIndex];
+
+          result.push({
+            expertiseAreaId: this.articleId(),
+            userId: eaUser.id
+          });
+        }
+      });
     });
-  });
+
+    return result;
+  }
+
+  setCategory(event: MatSelectChange){
+    this.selectedExpertiseName.set(event.value);
+  }
+
+  setIsSelectExpert(){
+    this.isSelectExpert.update(value => !value)
+  }
+
+  addArticleExpert(){
+    const selectedPairs = this.getSelectedPairs();
+    const data = selectedPairs.map(pair => {
+      return {articleId: pair.expertiseAreaId, expertId: pair.userId};
+    })
 
 
+    this.expertService.addArticleExperts(data).subscribe({
+      next: (res) => {
+        console.log(res)
+      },
+      error: _ =>{
 
-
-  openDialog() {
-    this.resetFilters();
-    this.selectedExpertIds.set([]);
+      }
+    })
+    console.log('Seçilenler (areaId + userId):', selectedPairs);
   }
 
   closeDialog() {
     this.dialogRef.close();
   }
-
-
-  resetFilters() {
-    this.filters.search.set('');
-    this.filters.expertise.set('');
-    this.currentPage.set(1);
-  }
-
-    toggleExpert(id: string) {
-    this.selectedExpertIds.update(ids => {
-      if (ids.includes(id)) {
-        return ids.filter(i => i !== id);
-      } else {
-        return [...ids, id];
-      }
-    });
-  }
-
-
- nextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
-    }
-  }
-
-  prevPage() {
-    if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
-    }
-  }
-
 }

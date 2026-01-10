@@ -5,8 +5,6 @@ export type ArticleDto = {
   title: string,
   content: string,
   summary: string,
-  category: string,
-  authorName: string,
   status: ArticleStatus,
   updatedAt: string,
 }

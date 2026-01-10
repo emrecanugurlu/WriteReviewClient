@@ -1,12 +1,7 @@
 <section class="article-page" style="margin-bottom: 20px;">
   <section class="article-summary">
     <div class="article-summary-text" style="display: flex; justify-content: right">
-      @if (article().status == 1){
-        <button matButton="filled" (click)="openDialog(article().id)" style="border-radius: 10px; margin-right: 10px; background-color: #cc0000"><mat-icon fontIcon="cancel"></mat-icon>Reddet</button>
-        <button matButton="filled" (click)="openAction(article().id,'review')" style="border-radius: 10px"><mat-icon fontIcon="visibility"></mat-icon>İncelemeye al</button>
-      } @else if (article().status == 4) {
-        <button matButton="filled" disabled style="border-radius: 10px; background-color: #cc0000; color: white"><mat-icon fontIcon="cancel"></mat-icon>Bu makale reddedildi</button>
-      }
+<button matButton="filled" style="border-radius: 10px">İnceleme Gönder</button>
     </div>
   </section>
 </section>
@@ -14,6 +9,7 @@
 
 @if (article()){
   <div class="article-page">
+
     <div class="article-header">
       <div class="article-pill">
         <span class="article-pill-dot"></span>
@@ -50,13 +46,14 @@
     <section class="article-summary">
       <div class="article-summary-label">Özet</div>
       <div class="article-summary-text">
-        {{ article().summary }}
+        {{ article().title }}
       </div>
     </section>
 
     <article class="article-content">
+      <!-- İçerik düz metinse: -->
       <p>
-        {{ article().content }}
+        {{ article().title }}
       </p>
 
     </article>
