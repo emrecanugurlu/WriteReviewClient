@@ -23,7 +23,7 @@ export class MyArticles implements OnInit {
   page = 1;
   pageSize = 10;
   total = 0;
-  myArticles: ArticleListItem[] = [];
+  myArticles = signal<ArticleListItem[]>([]);
   router = inject(Router);
 
   get totalPages() { return Math.max(1, Math.ceil(this.total / this.pageSize)); }
@@ -43,7 +43,8 @@ export class MyArticles implements OnInit {
     this.api.getMine(this.page, this.pageSize).subscribe({
       next: r => {
         this.loading.set(false);
-        this.myArticles = r.items;
+        this.myArticles.set(r.items);
+        this.total = r.total;
       },
       error: e => {
         this.error.set('Liste alınamadı');
@@ -89,8 +90,8 @@ export class MyArticles implements OnInit {
   ];
 
   get filteredArticles() {
-    if (!this.myArticles) return [];
-    return this.myArticles.filter(article => {
+    if (!this.myArticles()) return [];
+    return this.myArticles().filter(article => {
       const term = this.searchTerm ? this.searchTerm.toLowerCase() : '';
       const matchesSearch = !term ||
         (article.title && article.title.toLowerCase().includes(term)) ||

@@ -1,15 +1,17 @@
-import {Component, inject, signal} from '@angular/core';
-import {DecimalPipe} from '@angular/common';
-import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ArticleService} from '../../../../services/article/article-service';
+import { Component, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ArticleService } from '../../../../services/article/article-service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-add-article',
   imports: [
     DecimalPipe,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './add-article.html',
   styleUrl: './add-article.scss',
@@ -18,12 +20,12 @@ export class AddArticle {
 
   submissionType: 'file' | 'text' = 'text';
   isDragging: boolean = false;
-  isSubmitting: boolean = true;
+
   showSuccessAlert: boolean = false;
 
   private _snackbar = inject(MatSnackBar)
-  loading  = signal(false);
-  ok =signal(false);
+  loading = signal(false);
+  ok = signal(false);
   error = signal("");
 
   fb = inject(FormBuilder);
@@ -66,10 +68,11 @@ export class AddArticle {
       tags: this.formGroup.value.tags!,
     };
 
-    this.articleApi.createArticle({articleDto:payload,isSubmit:isSubmitting}).subscribe({
+    this.articleApi.createArticle({ articleDto: payload, isSubmit: isSubmitting }).subscribe({
       next: _res => {
         this.ok.set(true);
         this.loading.set(false);
+        this.showSuccessAlert = true;
         console.log(_res)
       },
       error: err => { this.error.set('Kaydetme sırasında hata oluştu.'); this.loading.set(false); console.error(err); }
