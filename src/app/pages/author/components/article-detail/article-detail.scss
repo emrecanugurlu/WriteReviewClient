@@ -1,0 +1,28 @@
+/* SCSS is mostly empty now as we moved to inline Tailwind classes for a modern look */
+/* Keeping file for any custom overrides if needed later */
+
+:host {
+    display: block;
+}
+
+/* Custom scrollbar for textareas if needed */
+textarea {
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 20px;
+        border: 3px solid transparent;
+        background-clip: content-box;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: #94a3b8;
+    }
+}

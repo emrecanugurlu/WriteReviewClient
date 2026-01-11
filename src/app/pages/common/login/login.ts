@@ -56,6 +56,8 @@ export class Login {
         return '/manager-panel';
       case 'Expert':
         return '/expert-panel';
+      case 'Author':
+        return '/my-articles';
       default:
         return '/my-articles';
     }

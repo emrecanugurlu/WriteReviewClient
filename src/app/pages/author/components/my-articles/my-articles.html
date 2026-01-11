@@ -15,12 +15,11 @@
         <span class="font-bold text-lg tracking-tight">Makale Tetkik</span>
       </div>
       <nav class="hidden md:flex gap-6 text-sm font-medium text-slate-500">
-        <a href="#" class="hover:text-blue-600 transition-colors">Yönergeler</a>
-        <a href="#" class="hover:text-blue-600 transition-colors">Son Sayı</a>
         <button
-          class="w-8 h-8 bg-slate-100 rounded-3 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200" (click)="goToProfile()">
+          class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200"
+          (click)="goToProfile()">
           YA
-      </button>
+        </button>
       </nav>
     </div>
   </header>
@@ -94,9 +93,9 @@
       </div>
 
       <!-- Makale Kartları -->
-      @for (article of myArticles; track article.id) {
-      <div
-        class="group bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:border-amber-100 hover:shadow-lg transition-all flex flex-col relative">
+      @for (article of filteredArticles; track article.id) {
+      <div (click)="goUpdateArticle(article.id)"
+        class="cursor-pointer group bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:border-amber-100 hover:shadow-lg transition-all flex flex-col relative">
 
         <!-- Durum Badge -->
         <div class="absolute top-5 right-6">
