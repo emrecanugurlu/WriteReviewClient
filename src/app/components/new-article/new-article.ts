@@ -1,8 +1,8 @@
-import {Component, inject, signal} from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ArticleService} from '../../services/article/article-service';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatButton} from '@angular/material/button';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ArticleService } from '../../services/article/article-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-new-article',
@@ -16,8 +16,8 @@ import {MatButton} from '@angular/material/button';
 export default class NewArticle {
 
   private _snackbar = inject(MatSnackBar)
-  loading  = signal(false);
-  ok =signal(false);
+  loading = signal(false);
+  ok = signal(false);
   error = '';
 
   fb = inject(FormBuilder);
@@ -32,9 +32,9 @@ export default class NewArticle {
   });
 
   categories = [
-    {id: 'cat-arch', name: 'Mimari'},
-    {id: 'cat-web', name: 'Web'},
-    {id: 'cat-db', name: 'Veri Tabanı'},
+    { id: 'cat-arch', name: 'Mimari' },
+    { id: 'cat-web', name: 'Web' },
+    { id: 'cat-db', name: 'Veri Tabanı' },
   ];
 
   wordCount = 0;
@@ -52,7 +52,6 @@ export default class NewArticle {
   }
 
   saveArticle(isSubmit: Boolean) {
-    /*
     this.ok.set(false);
     this.error = '';
     this.loading.set(true);
@@ -68,19 +67,20 @@ export default class NewArticle {
       title: this.form.value.title!,
       summary: this.form.value.summary!,
       content: this.form.value.content!,
+      categoryId: this.form.value.categoryId!,
+      tags: this.form.value.tags ?? ''
     };
 
-    this.articleApi.createArticle({articleDto:payload,isSubmit:isSubmit}).subscribe({
-        next: _res => {
-          this.ok.set(true);
-          this.loading.set(false);
-          this._snackbar.open(_res.message,"Kapat",{
-            duration: 5000,
-          })
-          },
-        error: err => { this.error = 'Kaydetme sırasında hata oluştu.'; this.loading.set(false); console.error(err); }
+    this.articleApi.createArticle({ articleDto: payload, isSubmit: isSubmit }).subscribe({
+      next: _res => {
+        this.ok.set(true);
+        this.loading.set(false);
+        this._snackbar.open(_res.message, "Kapat", {
+          duration: 5000,
+        })
+      },
+      error: err => { this.error = 'Kaydetme sırasında hata oluştu.'; this.loading.set(false); console.error(err); }
     })
-*/
   }
 
   private parseTags(raw: string): string[] {

@@ -1,15 +1,10 @@
-<div >
+@if(isLoggedIn()){
+  <app-top-app-bar></app-top-app-bar>
+}
+
+<div class="page">
   <router-outlet></router-outlet>
 </div>
-
-
-
-<!--
-  <app-top-app-bar></app-top-app-bar>
-  <div class="page">
-    <router-outlet></router-outlet>
-  </div>
--->
 
 
 
