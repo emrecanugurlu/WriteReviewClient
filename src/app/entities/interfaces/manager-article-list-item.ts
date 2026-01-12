@@ -1,7 +1,7 @@
 export interface ManagerArticleListItem {
   id: string;
   title: string;
-  categoryName: string;
+  category: string;
   authorName: string;
   authorId: string;
   status: number;

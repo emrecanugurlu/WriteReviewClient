@@ -35,21 +35,7 @@ export class ArticleDetail {
   constructor() {
     this.route.paramMap.subscribe(param => {
       this.id.set(<string>param.get("id"));
-    })
-    this.loading.set(true);
-    this.ok.set(false);
-    this.articleService.getArticleWithId(this.id()).subscribe({
-      next: (result) => {
-        this.loading.set(false);
-        this.ok.set(true);
-        console.log(result);
-        this.article.set(result);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set("Error: " + err.message);
-        console.log(err);
-      }
+      this.fetchArticle();
     })
   }
 
@@ -71,14 +57,36 @@ export class ArticleDetail {
 
 
 
+  fetchArticle() {
+    this.loading.set(true);
+    this.articleService.getArticleWithId(this.id()).subscribe({
+      next: (result) => {
+        this.loading.set(false);
+        this.ok.set(true);
+        console.log(result);
+        this.article.set(result);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set("Error: " + err.message);
+        console.log(err);
+      }
+    })
+  }
+
   openRejectDialog() {
-    console.log(this.id());
-    this.dialog.open(RejectDialog, { data: { articleId: this.id() } })
+    const dialogRef = this.dialog.open(RejectDialog, { data: { articleId: this.id() } });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchArticle();
+      }
+    });
   }
 
   openAssignDialog() {
-    this.dialog.open(SetExpertsDialog, 
-      { width:'100%',maxWidth:'56rem', maxHeight:'60rem', data: { articleId: this.id() } },
+    this.dialog.open(SetExpertsDialog,
+      { width: '100%', maxWidth: '56rem', maxHeight: '60rem', data: { articleId: this.id() } },
     )
   }
 
