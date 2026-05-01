@@ -1,47 +1,34 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { ArticleListItem } from '../../../../entities/interfaces/article-list-item';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ArticleService } from '../../../../services/article/article-service';
 import { PageResult } from '../../../../entities/interfaces/page-result';
 import { ManagerArticleListItem } from '../../../../entities/interfaces/manager-article-list-item';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-manager-panel',
-  imports: [DatePipe],
+  imports: [DatePipe, NgClass, RouterLink, FormsModule],
   templateUrl: './manager-panel.html',
   styleUrl: './manager-panel.scss',
 })
 export class ManagerPanel implements OnInit {
   Math = Math;
   router = inject(Router);
-  articles : PageResult<ManagerArticleListItem> ={page:1,pageSize:10, total:0, items:[]}; 
+  articles: PageResult<ManagerArticleListItem> = { page: 1, pageSize: 10, total: 0, items: [] };
   articleService = inject(ArticleService);
   loading = signal(false);
   error = signal<string | null>(null);
   ok = signal(false);
-  
 
-  // constructor() {
-  //   this.articleService.getStaffArticles().subscribe({
-  //     next: (res) => {
-  //       console.log('Fetched articles:', res);
-  //       this.articles.items = res.items;
-  //       this.articles.page = res.page;
-  //       this.articles.pageSize = res.pageSize;
-  //       this.articles.total = res.total;
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching articles:', err);
-  //     }
-  //   });
-  // }
+  // Arama & filtre
+  searchQuery = signal('');
+  activeStatusFilter = signal<number | null>(null); // null = Tümü
 
   ngOnInit(): void {
     this.loading.set(true);
     this.articleService.getStaffArticles().subscribe({
       next: (res) => {
-        console.log('Fetched articles:', res);
         this.articles.items = res.items;
         this.articles.page = res.page;
         this.articles.pageSize = res.pageSize;
@@ -57,20 +44,51 @@ export class ManagerPanel implements OnInit {
     });
   }
 
+  // --- Computed Filtreler ---
+  filteredArticles = computed(() => {
+    let items = this.articles.items;
+    const q = this.searchQuery().toLowerCase().trim();
+    const status = this.activeStatusFilter();
 
+    if (q) {
+      items = items.filter(a =>
+        a.title.toLowerCase().includes(q) ||
+        a.authorName.toLowerCase().includes(q) ||
+        a.category.toLowerCase().includes(q)
+      );
+    }
+    if (status !== null) {
+      items = items.filter(a => a.status === status);
+    }
+    return items;
+  });
 
-  // --- Pagination Logic ---
+  // Durum sayıları (gerçek veriden)
+  countByStatus = (status: number) =>
+    this.articles.items.filter(a => a.status === status).length;
+
+  setStatusFilter(status: number | null) {
+    this.activeStatusFilter.set(status);
+    this.currentPage = 1;
+  }
+
+  // --- Pagination ---
   currentPage = 1;
-  itemsPerPage = 6;
+  itemsPerPage = 8;
 
   get totalPages(): number {
-    return Math.ceil(this.articles.items.length / this.itemsPerPage);
+    return Math.ceil(this.filteredArticles().length / this.itemsPerPage);
+  }
+
+  get pagedArticles(): ManagerArticleListItem[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredArticles().slice(start, start + this.itemsPerPage);
   }
 
   get visiblePages(): number[] {
     const total = this.totalPages;
     const current = this.currentPage;
-    const delta = 1; // current sayfanın sağında ve solunda kaç sayfa görünsün
+    const delta = 1;
     const range: number[] = [];
     const rangeWithDots: any[] = [];
     let l: number | undefined;
@@ -80,19 +98,14 @@ export class ManagerPanel implements OnInit {
         range.push(i);
       }
     }
-
     range.forEach(i => {
       if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push(-1); // -1 represents dots
-        }
+        if (i - l === 2) rangeWithDots.push(l + 1);
+        else if (i - l !== 1) rangeWithDots.push(-1);
       }
       rangeWithDots.push(i);
       l = i;
     });
-
     return rangeWithDots;
   }
 
@@ -102,50 +115,36 @@ export class ManagerPanel implements OnInit {
     }
   }
 
-  // --- Helper Functions ---
-
+  // --- Yardımcılar ---
   getCategoryClass(category: string): string {
-    const baseClasses = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-default ";
-
+    const base = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ';
     switch (category) {
-      case 'Dergi':
-        return baseClasses + "bg-blue-50 text-blue-700 hover:bg-blue-100";
-      case 'Gazete':
-        return baseClasses + "bg-violet-50 text-violet-700 hover:bg-violet-100";
-      case 'Olgu Sunumu':
-        return baseClasses + "bg-rose-50 text-rose-700 hover:bg-rose-100";
-      case 'Editöre Mektup':
-        return baseClasses + "bg-emerald-50 text-emerald-700 hover:bg-emerald-100";
-      case 'Makale':
-      default:
-        return baseClasses + "bg-slate-100 text-slate-600 hover:bg-slate-200";
-    }
-  }
-
-  getStatusClass(status: string): string {
-    const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ";
-    switch (status) {
-      case 'pending': return baseClasses + "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case 'in-review': return baseClasses + "bg-purple-50 text-purple-700 border-purple-200";
-      case 'revision': return baseClasses + "bg-orange-50 text-orange-700 border-orange-200";
-      case 'accepted': return baseClasses + "bg-green-50 text-green-700 border-green-200";
-      case 'rejected': return baseClasses + "bg-red-50 text-red-700 border-red-200";
-      default: return baseClasses + "bg-slate-100 text-slate-700 border-slate-200";
+      case 'Dergi': return base + 'bg-blue-50 text-blue-700';
+      case 'Gazete': return base + 'bg-violet-50 text-violet-700';
+      case 'Olgu Sunumu': return base + 'bg-rose-50 text-rose-700';
+      case 'Editöre Mektup': return base + 'bg-teal-50 text-teal-700';
+      default: return base + 'bg-slate-100 text-slate-600';
     }
   }
 
   getStatusLabel(status: number): string {
     switch (status) {
-      case 0: return 'Beklemede';
-      case 1 : return 'Hakemde';
-      case 2: return 'Revizyon';
+      case 0: return 'Taslak';
+      case 1: return 'Bekleyen';
+      case 2: return 'Hakemde';
       case 3: return 'Kabul Edildi';
       case 4: return 'Reddedildi';
-      default: return "Bilinmiyor";
+      case 5: return 'Revizyon';
+      default: return 'Bilinmiyor';
     }
   }
 
+  /** Hakem atanmamış + beklemede ise acil göster */
+  isUrgent(article: ManagerArticleListItem): boolean {
+    return article.status === 1 && (!article.experts || article.experts.length === 0);
+  }
+
   goArticleDetail(articleId: string) {
-    this.router.navigate(['/article-detail',articleId]).then(() => {});
+    this.router.navigate(['/article-detail', articleId]).then(() => {});
   }
 }

@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// Any custom overrides that tailwind cannot handle easily
+.users-container {
+  // Ensure the container fills the available space nicely
+  min-height: 100%;
+}

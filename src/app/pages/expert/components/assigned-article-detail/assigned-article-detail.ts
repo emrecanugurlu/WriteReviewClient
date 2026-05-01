@@ -8,7 +8,7 @@ import { AssignedArticeData } from '../../../../services/assigned-artice-data';
 import { FormsModule } from '@angular/forms';
 import { Expert } from '../../../../services/expert';
 import { AssignedArticleDto } from '../../../../dto/assigned-article-dto';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 
 
 // Tip Tanımlamaları
@@ -30,7 +30,8 @@ interface Article {
   selector: 'app-assigned-article-detail',
   imports: [
     FormsModule,
-    DatePipe
+    DatePipe,
+    NgClass
   ],
   templateUrl: './assigned-article-detail.html',
   styleUrl: './assigned-article-detail.scss'
@@ -39,6 +40,7 @@ export class AssignedArticleDetail {
 
 private expertService = inject(Expert);
 private route = inject(ActivatedRoute);
+private router = inject(Router);
 private articleId = signal<string>("");
 protected assignedArticleDetail = signal<AssignedArticleDto| null>(null);
 
@@ -112,15 +114,26 @@ constructor() {
   submitReview() {
     if (!this.activeDialog()) return;
     
-    // API çağrısı simülasyonu
-    console.log('Karar:', this.activeDialog());
-    console.log('Notlar:', this.reviewNote);
-    
-    // Dialogu kapat
-    this.closeDialog();
+    let status = 0;
+    if (this.activeDialog() === 'accept') status = 1;
+    if (this.activeDialog() === 'reject') status = 2;
+    if (this.activeDialog() === 'revision') status = 3;
 
-    // Bildirim göster
-    this.showToast.set(true);
-    setTimeout(() => this.showToast.set(false), 3000);
+    this.expertService.sendFeedback(this.articleId(), this.reviewNote, status).subscribe({
+      next: (res) => {
+        // Dialogu kapat
+        this.closeDialog();
+
+        // Bildirim göster
+        this.showToast.set(true);
+        setTimeout(() => {
+          this.showToast.set(false);
+          this.router.navigate(['/expert-panel']);
+        }, 3000);
+      },
+      error: (err) => {
+        console.error('Değerlendirme gönderilirken hata oluştu:', err);
+      }
+    });
   }
 }

@@ -1,15 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/auth/auth-service';
+import { AuthService } from '../../../../services/auth/auth-service';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-manager-profile',
   imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: './profile.html',
-  styleUrl: './profile.scss',
+  templateUrl: './manager-profile.html',
+  styleUrl: './manager-profile.scss',
 })
-export class Profile {
+export class ManagerProfile {
   isEditing = signal(false);
   showLogoutDialog = signal(false);
   formBuilder = inject(FormBuilder);
@@ -17,14 +17,14 @@ export class Profile {
   authService = inject(AuthService);
 
   user = signal({
-    name: 'Ahmet Yılmaz',
-    role: 'Yazar',
-    title: 'Teknoloji Editörü',
-    bio: 'Yazılım mimarisi ve UX üzerine yazıyorum. Basitlik en büyük karmaşıklıktır.',
-    articleCount: 42,
-    approvedCount: 28,
-    pendingCount: 7,
-    joinYear: 2022
+    name: 'Dr. Editör',
+    role: 'Baş Editör',
+    title: 'Yönetici Editör',
+    bio: 'Akademik yayıncılık süreçleri ve hakem değerlendirmesi üzerine uzmanlaşmış editör. Kaliteli bilimsel içerik üretimini destekliyorum.',
+    reviewedCount: 128,
+    assignedCount: 34,
+    pendingCount: 18,
+    joinYear: 2020
   });
 
   profileForm = this.formBuilder.group({

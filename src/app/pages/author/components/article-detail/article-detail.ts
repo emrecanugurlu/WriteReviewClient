@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { forkJoin, catchError, of } from 'rxjs';
 
 import { ArticleService } from '../../../../services/article/article-service';
 import { ArticleReview } from '../../../../entities/interfaces/article-review';
@@ -14,6 +15,7 @@ import { ArticleReview } from '../../../../entities/interfaces/article-review';
         FormsModule,
         ReactiveFormsModule,
         DatePipe,
+        NgClass,
         RouterLink
     ],
     templateUrl: './article-detail.html',
@@ -66,35 +68,35 @@ export class ArticleDetail {
                 return;
             }
 
-            this.articleApi.getReviews(id).subscribe({
-                next: rev => {
-                    // Handle different response structures if necessary, assuming {staff: [], experts: []}
-                    if ('staff' in rev) {
-                        this.reviews = (rev as any).staff;
+            // İki isteği paralel çalıştır, ikisi de tamamlandığında loading'i kapat
+            forkJoin({
+                article: this.articleApi.getArticleWithId(id),
+                reviews: this.articleApi.getReviews(id).pipe(
+                    catchError(() => of([]))  // Hata olursa boş dizi dön, sayfayı engelleme
+                )
+            }).subscribe({
+                next: ({ article, reviews }) => {
+                    // Makale verisini set et
+                    this.article.set({ ...article });
+
+                    // Review verisini işle
+                    const rev: any = reviews;
+                    if (rev && 'staff' in rev) {
+                        this.reviews = rev.staff;
                     } else {
-                        this.reviews = rev as any;
+                        this.reviews = Array.isArray(rev) ? rev : [];
                     }
-                    this.loading.set(false);
-                },
-                error: _ => { this.reviews = []; } // Don't stop loading here, wait for article
-            });
 
-            this.articleApi.getArticleWithId(id).subscribe({
-                next: article => {
-                    this.article.set({ ...article })
-                    this.loading.set(false);
-
-                    // Check if editable
-                    const isEditable = article.status === 0 || article.status === 5; // Draft or ReviewRequested
-
+                    // Form doldur
                     this.form.patchValue({
                         title: article.title,
                         summary: article.summary,
                         content: article.content,
                         categoryId: article.category,
-                        tags: '' // Tags handling if available
+                        tags: ''
                     });
 
+                    const isEditable = article.status === 0 || article.status === 5;
                     if (!isEditable) {
                         this.form.disable();
                     } else {
@@ -106,17 +108,28 @@ export class ArticleDetail {
                     this.form.get('content')?.valueChanges.subscribe(val => {
                         this.wordCount = val ? val.split(/\s+/).length : 0;
                     });
+
+                    // Her iki istek de bitti, şimdi loading kapat
+                    this.loading.set(false);
                 },
                 error: err => {
                     this.error = "Makale yüklenemedi.";
                     this.loading.set(false);
                 }
-            })
+            });
         });
     }
 
     get isEditable() {
         return this.article().status === 0 || this.article().status === 5;
+    }
+
+    get readTime(): number {
+        return Math.max(1, Math.ceil(this.wordCount / 200));
+    }
+
+    get charCount(): number {
+        return this.form.get('content')?.value?.length || 0;
     }
 
     statusText(s: number) {

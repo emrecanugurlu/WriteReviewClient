@@ -1,0 +1,52 @@
+<div class="flex flex-col font-sans text-slate-800 select-none">
+  <!-- ── HEADER ── -->
+  <div class="flex items-center justify-between px-6 pt-6 pb-5 border-b border-slate-100 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+        <span class="material-symbols-rounded text-white text-[22px]">group</span>
+      </div>
+      <div>
+        <h2 class="font-bold text-slate-800 text-lg leading-tight" style="font-family:'Outfit',sans-serif;">Atanan Hakemler</h2>
+        <p class="text-xs text-slate-400">Bu makaleyi değerlendiren uzmanlar</p>
+      </div>
+    </div>
+    <button (click)="closeDialog()"
+      class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
+      <span class="material-symbols-rounded text-[20px]">close</span>
+    </button>
+  </div>
+
+  <!-- ── CONTENT ── -->
+  <div class="p-6 flex flex-col gap-3">
+    @for (expert of data.experts; track expert.expertName) {
+      <div class="flex items-center gap-4 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 shadow-sm">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0">
+          {{ expert.expertName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-slate-800 truncate">{{ expert.expertName }}</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Uzman Hakem</p>
+        </div>
+        
+        <!-- Status Badge -->
+        <div class="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border shrink-0"
+             [ngClass]="{
+               'bg-amber-50 text-amber-700 border-amber-200': expert.status === 0,
+               'bg-blue-50 text-blue-700 border-blue-200': expert.status === 1,
+               'bg-red-50 text-red-700 border-red-200': expert.status === 2,
+               'bg-emerald-50 text-emerald-700 border-emerald-200': expert.status === 3
+             }">
+          {{ getExpertStatusLabel(expert.status) }}
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end shrink-0 bg-white rounded-b-[inherit]">
+    <button (click)="closeDialog()"
+      class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition-all">
+      Kapat
+    </button>
+  </div>
+</div>

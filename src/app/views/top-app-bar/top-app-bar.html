@@ -4,38 +4,38 @@
 
     @if (authService.isLoggedIn() && authService.getUserRole() != "Admin") {
       <a [routerLink]="['/my-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Yazılarım</button>
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Yazılarım</button>
       </a>
     }
 
     @if (authService.getUserRole() == "Manager") {
       <a [routerLink]="['/staff/inbox']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Gönderilen yazılar</button>
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Gönderilen yazılar</button>
       </a>
     }
 
     @if (authService.getUserRole() == "Admin") {
       <a [routerLink]="['/admin']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">Admin Panel</button>
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Admin Panel</button>
       </a>
     }
 
     @if (authService.isLoggedIn() && authService.getUserRole() == "Expert") {
       <a [routerLink]="['/assigned-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light">İncelenecek Yazılar</button>
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">İncelenecek Yazılar</button>
       </a>
     }
 
     <span class="spacer"></span>
     @if (authService.isLoggedIn()) {
       <a routerLink="/profile" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button  [ngClass]="{'active-button': rla.isActive}" class="btn btn-light" matButton>Profil
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn" matButton>Profil
           <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="account_circle"></mat-icon>
         </button>
       </a>
     } @else {
       <a routerLink="/login" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="btn btn-light" matButton>Giriş Yap
+        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn" matButton>Giriş Yap
           <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="login"></mat-icon>
         </button>
       </a>

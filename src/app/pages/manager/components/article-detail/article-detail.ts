@@ -5,16 +5,19 @@ import { ArticleService } from '../../../../services/article/article-service';
 import { ArticleDto } from '../../../../dto/article-dto';
 import SetExpertsDialog from '../../../../views/set-experts-dialog/set-experts-dialog';
 import { RejectDialog } from '../../../../views/reject-dialog/reject-dialog';
+import { ViewExpertsDialog } from '../../../../views/view-experts-dialog/view-experts-dialog';
 import { LucideAngularModule } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-article-detail',
   imports: [
     LucideAngularModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    DatePipe,
+    NgClass
   ],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.scss'
@@ -85,10 +88,19 @@ export class ArticleDetail {
   }
 
   openAssignDialog() {
-    this.dialog.open(SetExpertsDialog,
+    const dialogRef = this.dialog.open(SetExpertsDialog,
       { width: '100%', maxWidth: '56rem', maxHeight: '60rem', data: { articleId: this.id() } },
-    )
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.fetchArticle();
+    });
   }
 
+  openViewExpertsDialog() {
+    this.dialog.open(ViewExpertsDialog,
+      { width: '100%', maxWidth: '32rem', data: { experts: this.article().experts || [] } }
+    )
+  }
 
 }

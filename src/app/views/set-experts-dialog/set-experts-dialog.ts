@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, computed, inject, model, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogContent, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { AssignExpertsDto } from '../../dto/assign-experts-dto';
   imports: [
     ReactiveFormsModule,
     CommonModule,
+    NgClass,
     FormsModule,
   ],
   templateUrl: './set-experts-dialog.html',
@@ -170,6 +171,12 @@ get uniqueSpecialties(): string[] {
     if (this.currentPage() > 1) {
       this.currentPage.update(p => p - 1);
     }
+  }
+
+  /** Sağ paneldeki boş slot sayısını döner (max 3 uzman) */
+  getEmptySlots(): number[] {
+    const remaining = 3 - this.selectedExpertIds().length;
+    return Array.from({ length: remaining }, (_, i) => i + 1);
   }
 
 }

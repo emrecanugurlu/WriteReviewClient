@@ -1,15 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/auth/auth-service';
+import { AuthService } from '../../../../services/auth/auth-service';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-expert-profile',
   imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: './profile.html',
-  styleUrl: './profile.scss',
+  templateUrl: './expert-profile.html',
+  styleUrl: './expert-profile.scss',
 })
-export class Profile {
+export class ExpertProfile {
   isEditing = signal(false);
   showLogoutDialog = signal(false);
   formBuilder = inject(FormBuilder);
@@ -17,14 +17,14 @@ export class Profile {
   authService = inject(AuthService);
 
   user = signal({
-    name: 'Ahmet Yılmaz',
-    role: 'Yazar',
-    title: 'Teknoloji Editörü',
-    bio: 'Yazılım mimarisi ve UX üzerine yazıyorum. Basitlik en büyük karmaşıklıktır.',
-    articleCount: 42,
-    approvedCount: 28,
-    pendingCount: 7,
-    joinYear: 2022
+    name: 'Dr. Hakem',
+    role: 'Hakem',
+    title: 'Alan Uzmanı',
+    bio: 'Akademik hakemlik ve bilimsel değerlendirme süreçleri üzerine uzmanlaşmış araştırmacı. Bağımsız ve tarafsız değerlendirme ilkesini benimsiyorum.',
+    reviewedCount: 64,
+    pendingCount: 5,
+    acceptedCount: 41,
+    joinYear: 2021
   });
 
   profileForm = this.formBuilder.group({
@@ -59,13 +59,8 @@ export class Profile {
     }
   }
 
-  confirmLogout() {
-    this.showLogoutDialog.set(true);
-  }
-
-  cancelLogout() {
-    this.showLogoutDialog.set(false);
-  }
+  confirmLogout() { this.showLogoutDialog.set(true); }
+  cancelLogout() { this.showLogoutDialog.set(false); }
 
   logout() {
     this.showLogoutDialog.set(false);

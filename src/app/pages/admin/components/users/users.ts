@@ -1,17 +1,20 @@
-import {Component, inject, signal} from '@angular/core';
-import {User} from '../../../../services/user';
-import {UsersDto} from '../../../../dto/users-dto';
-
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { User } from '../../../../services/user';
+import { UsersDto } from '../../../../dto/users-dto';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-users',
-  imports: [],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatMenuModule],
   templateUrl: './users.html',
   styleUrl: './users.scss'
 })
 export class Users {
   readonly userService = inject(User)
-  readonly users = signal([<UsersDto>{}]);
+  readonly users = signal<UsersDto[]>([]);
 
   constructor() {
     this.userService.getAllUsers().subscribe(
@@ -26,5 +29,4 @@ export class Users {
       }
     )
   }
-
 }

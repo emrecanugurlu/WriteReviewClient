@@ -9,4 +9,5 @@ export type ArticleDto = {
   authorName: string,
   status: ArticleStatus,
   updatedAt: string,
+  experts?: { expertName: string, status: number }[],
 }

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ArticleService } from '../../../../services/article/article-service';
@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-add-article',
   imports: [
     DecimalPipe,
+    NgClass,
     FormsModule,
     ReactiveFormsModule,
     RouterLink

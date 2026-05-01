@@ -30,6 +30,14 @@ export class Expert {
     return this.http.get<AssignedArticleDto>(`/api/experts/get-assigned-article-detail/?${params.toString()}`);
   }
 
+  sendFeedback(articleId: string, feedback: string, status: number, score?: number) {
+    return this.http.post(`/api/experts/assignments/${articleId}/feedback`, {
+      feedback,
+      score,
+      status
+    });
+  }
+
   getAllExperts(){
     return this.http.get<ExpertDto[]>(`/api/experts`)
   }
