@@ -3,4 +3,5 @@ export type UsersDto = {
   userName: string,
   fullName: string,
   email: string,
+  roles?: string[]
 }

@@ -19,25 +19,37 @@
   <!-- ── CONTENT ── -->
   <div class="p-6 flex flex-col gap-3">
     @for (expert of data.experts; track expert.expertName) {
-      <div class="flex items-center gap-4 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 shadow-sm">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0">
-          {{ expert.expertName.charAt(0).toUpperCase() }}
+      <div class="flex flex-col gap-3 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0">
+            {{ expert.expertName.charAt(0).toUpperCase() }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-slate-800 truncate">{{ expert.expertName }}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Uzman Hakem</p>
+          </div>
+          
+          <!-- Status Badge -->
+          <div class="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border shrink-0"
+               [ngClass]="{
+                 'bg-amber-50 text-amber-700 border-amber-200': expert.status === 0,
+                 'bg-emerald-50 text-emerald-700 border-emerald-200': expert.status === 1,
+                 'bg-red-50 text-red-700 border-red-200': expert.status === 2,
+                 'bg-blue-50 text-blue-700 border-blue-200': expert.status === 3
+               }">
+            {{ getExpertStatusLabel(expert.status) }}
+          </div>
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-bold text-slate-800 truncate">{{ expert.expertName }}</p>
-          <p class="text-[11px] text-slate-400 mt-0.5">Uzman Hakem</p>
-        </div>
-        
-        <!-- Status Badge -->
-        <div class="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border shrink-0"
-             [ngClass]="{
-               'bg-amber-50 text-amber-700 border-amber-200': expert.status === 0,
-               'bg-blue-50 text-blue-700 border-blue-200': expert.status === 1,
-               'bg-red-50 text-red-700 border-red-200': expert.status === 2,
-               'bg-emerald-50 text-emerald-700 border-emerald-200': expert.status === 3
-             }">
-          {{ getExpertStatusLabel(expert.status) }}
-        </div>
+
+        @if (expert.feedback) {
+          <div class="bg-white/60 border border-slate-200/50 rounded-2xl p-4 text-[13px] text-slate-600 leading-relaxed italic">
+            <div class="flex items-center gap-2 mb-2 text-slate-400">
+              <span class="material-symbols-rounded text-[16px]">chat_bubble</span>
+              <span class="text-[10px] font-black uppercase tracking-widest">Hakem Notu</span>
+            </div>
+            "{{ expert.feedback }}"
+          </div>
+        }
       </div>
     }
   </div>

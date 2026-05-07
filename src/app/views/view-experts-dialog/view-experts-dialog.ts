@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface ViewExpertsDialogData {
-  experts: { expertName: string, status: number }[];
+  experts: { expertName: string, status: number, feedback?: string }[];
 }
 
 @Component({

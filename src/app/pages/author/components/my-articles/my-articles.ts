@@ -28,7 +28,7 @@ export class MyArticles implements OnInit {
 
   get totalPages() { return Math.max(1, Math.ceil(this.total / this.pageSize)); }
 
-  get pendingCount() { return this.myArticles().filter(a => a.status === 1).length; }
+  get pendingCount() { return this.myArticles().filter(a => a.status === 1 || a.status === 2 || a.status === 5).length; }
   get approvedCount() { return this.myArticles().filter(a => a.status === 3).length; }
   get draftCount() { return this.myArticles().filter(a => a.status === 0).length; }
 

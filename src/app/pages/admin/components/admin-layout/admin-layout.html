@@ -95,7 +95,7 @@
               <span>Tercihler</span>
             </button>
             <div class="h-[1px] bg-slate-100 my-1 mx-2"></div>
-            <button mat-menu-item class="!text-red-600 !rounded-xl !mx-2 !w-[calc(100%-16px)] hover:!bg-red-50 !mt-1">
+            <button mat-menu-item (click)="logout()" class="!text-red-600 !rounded-xl !mx-2 !w-[calc(100%-16px)] hover:!bg-red-50 !mt-1">
               <mat-icon class="!text-red-600"><span class="material-symbols-rounded">logout</span></mat-icon>
               <span>Çıkış Yap</span>
             </button>

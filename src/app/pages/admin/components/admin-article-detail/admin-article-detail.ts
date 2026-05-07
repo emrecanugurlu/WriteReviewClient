@@ -1,30 +1,20 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { ArticleService, ArticleStatus } from '../../../../services/article/article-service';
 import { ArticleDto } from '../../../../dto/article-dto';
-import SetExpertsDialog from '../../../../views/set-experts-dialog/set-experts-dialog';
-import { RejectDialog } from '../../../../views/reject-dialog/reject-dialog';
-import { ViewExpertsDialog } from '../../../../views/view-experts-dialog/view-experts-dialog';
-import { ApproveDialog } from '../../../../views/approve-dialog/approve-dialog';
-import { RevisionDialog } from '../../../../views/revision-dialog/revision-dialog';
-import { LucideAngularModule } from 'lucide-angular';
-import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-article-detail',
+  selector: 'app-admin-article-detail',
   imports: [
-    LucideAngularModule,
-    FormsModule,
     CommonModule,
     DatePipe,
     NgClass
   ],
-  templateUrl: './article-detail.html',
-  styleUrl: './article-detail.scss'
+  templateUrl: './admin-article-detail.html',
+  styleUrl: './admin-article-detail.scss'
 })
-export class ArticleDetail {
+export class AdminArticleDetail {
 
   private loading = signal(false);
   private error = signal("");
@@ -34,8 +24,6 @@ export class ArticleDetail {
   article = signal(<ArticleDto>{})
   private route = inject(ActivatedRoute);
   private id = signal("");
-  dialog = inject(MatDialog);
-
 
   constructor() {
     this.route.paramMap.subscribe(param => {
@@ -57,16 +45,6 @@ export class ArticleDetail {
       default: return 'Bilinmiyor';
     }
   }
-
-  openAction(id: string, type: 'review' | 'approve' | 'reject' | 'revreq') {
-    this.dialog.open(SetExpertsDialog, { data: { articleId: id } })
-  }
-
-  openDialog(id: string): void {
-    this.dialog.open(RejectDialog, { data: { articleId: id } })
-  }
-
-  activeTab = signal<'text' | 'pdf' | 'reports'>('text'); 
 
   getStatusLabel(): string {
     const status = this.article().status;
@@ -97,7 +75,7 @@ export class ArticleDetail {
       case ArticleStatus.Submitted: return 'bg-amber-50 text-amber-700 border-amber-100';
       case ArticleStatus.InReview: 
         if (total > 0 && completed >= total) {
-          return 'bg-blue-50 text-blue-700 border-blue-100'; // Karar bekleyenler için mavi
+          return 'bg-blue-50 text-blue-700 border-blue-100';
         }
         return 'bg-indigo-50 text-indigo-700 border-indigo-100';
       case ArticleStatus.Approved: return 'bg-emerald-50 text-emerald-700 border-emerald-100';
@@ -107,46 +85,12 @@ export class ArticleDetail {
     }
   }
 
-  approveArticle() {
-    const dialogRef = this.dialog.open(ApproveDialog, {
-      data: { articleId: this.id() },
-      width: '100%',
-      maxWidth: '28rem',
-      panelClass: 'modern-dialog'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) this.fetchArticle();
-    });
-  }
-
-  requestRevision() {
-    const dialogRef = this.dialog.open(RevisionDialog, {
-      data: { articleId: this.id() },
-      width: '100%',
-      maxWidth: '32rem',
-      panelClass: 'modern-dialog'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) this.fetchArticle();
-    });
-  }
-
-
-  // Pagination States
-
-  pageSize = signal(4);
-
-
-
-
-
   fetchArticle() {
     this.loading.set(true);
     this.articleService.getArticleWithId(this.id()).subscribe({
       next: (result) => {
         this.loading.set(false);
         this.ok.set(true);
-        console.log(result);
         this.article.set(result);
       },
       error: (err) => {
@@ -156,33 +100,4 @@ export class ArticleDetail {
       }
     })
   }
-
-  openRejectDialog() {
-    const dialogRef = this.dialog.open(RejectDialog, {
-      data: { articleId: this.id() },
-      width: '100%',
-      maxWidth: '28rem',
-      panelClass: 'modern-dialog'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) this.fetchArticle();
-    });
-  }
-
-  openAssignDialog() {
-    const dialogRef = this.dialog.open(SetExpertsDialog,
-      { width: '100%', maxWidth: '56rem', maxHeight: '60rem', data: { articleId: this.id() } },
-    );
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.fetchArticle();
-    });
-  }
-
-  openViewExpertsDialog() {
-    this.dialog.open(ViewExpertsDialog,
-      { width: '100%', maxWidth: '32rem', data: { experts: this.article().experts || [] } }
-    )
-  }
-
 }

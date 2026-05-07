@@ -67,6 +67,7 @@ constructor() {
   
   reviewNote = '';
   showToast = signal(false);
+  submitting = signal(false);
 
   // Mock Veri
   article = signal<Article>({
@@ -119,8 +120,10 @@ constructor() {
     if (this.activeDialog() === 'reject') status = 2;
     if (this.activeDialog() === 'revision') status = 3;
 
+    this.submitting.set(true);
     this.expertService.sendFeedback(this.articleId(), this.reviewNote, status).subscribe({
       next: (res) => {
+        this.submitting.set(false);
         // Dialogu kapat
         this.closeDialog();
 
@@ -129,11 +132,22 @@ constructor() {
         setTimeout(() => {
           this.showToast.set(false);
           this.router.navigate(['/expert-panel']);
-        }, 3000);
+        }, 2000); // 3 saniyeden 2 saniyeye düşürüldü
       },
       error: (err) => {
+        this.submitting.set(false);
         console.error('Değerlendirme gönderilirken hata oluştu:', err);
       }
     });
+  }
+
+  getStatusLabel(status: number | undefined): string {
+    switch (status) {
+      case 0: return 'Değerlendirme Bekliyor';
+      case 1: return 'Kabul Edildi';
+      case 2: return 'Reddedildi';
+      case 3: return 'Revizyon İstendi';
+      default: return 'Bilinmiyor';
+    }
   }
 }

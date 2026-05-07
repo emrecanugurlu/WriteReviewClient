@@ -3,8 +3,11 @@ import { Routes } from '@angular/router';
 
 
 import { authGuard } from './guards/auth-guard';
+import { guestGuard } from './guards/guest-guard';
 import { AdminLayout } from './pages/admin/components/admin-layout/admin-layout';
 import { Articles } from './pages/admin/components/articles/articles';
+import { Roles } from './pages/admin/components/roles/roles';
+import { AdminArticleDetail } from './pages/admin/components/admin-article-detail/admin-article-detail';
 import { ExpertiseAreas } from './pages/admin/components/expertise-areas/expertise-areas';
 import { Users } from './pages/admin/components/users/users';
 import { ArticleDetail } from './pages/manager/components/article-detail/article-detail';
@@ -23,7 +26,7 @@ import { ExpertProfile } from './pages/expert/components/expert-profile/expert-p
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'new-article', component: AddArticle, canActivate: [authGuard] },
-  { path: 'login', component: Login },
+  { path: 'login', component: Login, canActivate: [guestGuard] },
   { path: 'my-articles', component: MyArticles, canActivate: [authGuard] },
   { path: 'my-article-detail/:id', component: AuthorArticleDetail, canActivate: [authGuard] },
   { path: 'profile', component: Profile, canActivate: [authGuard] },
@@ -39,7 +42,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboard },
       { path: 'articles', component: Articles },
+      { path: 'article-detail/:id', component: AdminArticleDetail },
       { path: 'expertise-areas', component: ExpertiseAreas },
+      { path: 'roles', component: Roles },
       { path: 'users', component: Users },
     ], canActivate: [authGuard]
   },

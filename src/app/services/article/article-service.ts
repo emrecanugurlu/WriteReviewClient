@@ -50,12 +50,21 @@ export class ArticleService {
     return this.http.get<PageResult<ManagerArticleListItem>>(`/api/managers/articles?${q}`);
   }
 
+  getAllArticles(page = 1, pageSize = 10, status?: number) {
+    const q = new URLSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
+      ...(status !== undefined ? { status: String(status) } : {})
+    }).toString();
+    return this.http.get<PageResult<ManagerArticleListItem>>(`/api/articles/all?${q}`);
+  }
+
   takeToReview(id: string, body?: { note?: string | null }) {
     return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/review`, {});
   }
 
-  approve(id: string, body?: { note?: string | null }) {
-    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/approve`, {});
+  approve(id: string, body: { note?: string | null } = {}) {
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/approve`, body);
   }
 
   reject(id: string, body: { reason: string }) {
@@ -63,7 +72,7 @@ export class ArticleService {
   }
 
   requestRevision(id: string, body: { note: string }) {
-    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/request-revision`, {});
+    return this.http.post<{ id: string; status: number }>(`/api/managers/articles/${id}/request-revision`, body);
   }
 
   getReviews(articleId: string) {

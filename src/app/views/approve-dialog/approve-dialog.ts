@@ -1,41 +1,34 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
 import { ArticleService } from '../../services/article/article-service';
 
 @Component({
-  selector: 'app-reject-dialog',
+  selector: 'app-approve-dialog',
   standalone: true,
-  imports: [FormsModule],
-  templateUrl: './reject-dialog.html',
-  styleUrl: './reject-dialog.scss'
+  imports: [],
+  templateUrl: './approve-dialog.html',
 })
-export class RejectDialog {
-  readonly dialogRef = inject(MatDialogRef<RejectDialog>);
+export class ApproveDialog {
+  readonly dialogRef = inject(MatDialogRef<ApproveDialog>);
   readonly data = inject(MAT_DIALOG_DATA);
   readonly articleService = inject(ArticleService);
 
-  reason = '';
   loading = false;
   success = false;
 
-  closeRejectDialog() {
+  close() {
     this.dialogRef.close(this.success);
   }
 
-  confirmReject() {
-    const articleId = this.data?.articleId;
-    if (!articleId || !this.reason.trim()) return;
-
+  confirm() {
     this.loading = true;
-    this.articleService.reject(articleId, { reason: this.reason }).subscribe({
+    this.articleService.approve(this.data.articleId).subscribe({
       next: () => {
         this.loading = false;
         this.success = true;
       },
-      error: (err) => {
+      error: () => {
         this.loading = false;
-        console.error('Reddetme hatası:', err);
       }
     });
   }
