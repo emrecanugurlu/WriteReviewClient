@@ -1,0 +1,370 @@
+<div class="assign-page">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TOP NAV BAR
+  ══════════════════════════════════════════════════════════════ -->
+  <header class="assign-nav">
+    <div class="assign-nav__content">
+
+      <!-- Left: back + breadcrumb -->
+      <div class="assign-nav__left">
+        <button (click)="goBack()" class="assign-nav__back">
+          <span class="material-symbols-rounded">arrow_back</span>
+        </button>
+        <div class="assign-nav__divider"></div>
+        <nav class="assign-nav__breadcrumb">
+          <span class="assign-nav__breadcrumb-parent">Makale Detayı</span>
+          <span class="material-symbols-rounded assign-nav__breadcrumb-sep">chevron_right</span>
+          <span class="assign-nav__breadcrumb-current">Hakem Ata</span>
+        </nav>
+      </div>
+
+      <!-- Right: selected expert mini-avatars -->
+      @if (!loading() && !submitted()) {
+        <div class="assign-nav__right">
+          @if (selectedIds().length > 0) {
+            <div class="assign-nav__selected-preview">
+              @for (e of selectedExperts(); track e.id) {
+                <div class="assign-nav__mini-av" [title]="e.name">
+                  {{ e.name.charAt(0).toUpperCase() }}
+                </div>
+              }
+              <span class="assign-nav__selected-text">
+                {{ selectedIds().length }} hakem seçildi
+              </span>
+            </div>
+          } @else {
+            <span class="assign-nav__idle-text">Henüz hakem seçilmedi</span>
+          }
+        </div>
+      }
+
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════════════════════════════ -->
+  @if (loading()) {
+    <div class="assign-state-center">
+      <div class="assign-spinner"></div>
+      <p class="assign-state-text">Hakemler yükleniyor...</p>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ERROR
+  ══════════════════════════════════════════════════════════════ -->
+  @if (error() && !loading()) {
+    <div class="assign-state-center">
+      <div class="assign-state-icon assign-state-icon--error">
+        <span class="material-symbols-rounded">error_outline</span>
+      </div>
+      <p class="assign-state-title">Bir Hata Oluştu</p>
+      <p class="assign-state-text">{{ error() }}</p>
+      <button (click)="goBack()" class="assign-btn-outline">Geri Dön</button>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SUCCESS
+  ══════════════════════════════════════════════════════════════ -->
+  @if (submitted()) {
+    <div class="assign-state-center">
+      <div class="assign-success-ring">
+        <div class="assign-success-icon">
+          <span class="material-symbols-rounded">how_to_reg</span>
+        </div>
+      </div>
+      <h1 class="assign-success-title">Atama Tamamlandı!</h1>
+      <p class="assign-success-sub">
+        <strong>{{ selectedExperts().length }}</strong> hakem makaleye başarıyla atandı.
+      </p>
+      <div class="assign-avatar-row">
+        @for (e of selectedExperts(); track e.id) {
+          <div class="assign-avatar-pill" [title]="e.name">
+            <div class="assign-avatar-circle">{{ e.name.charAt(0).toUpperCase() }}</div>
+            <span>{{ e.name }}</span>
+          </div>
+        }
+      </div>
+      <button (click)="goBack()" class="assign-btn-primary assign-btn-primary--lg">
+        <span class="material-symbols-rounded">arrow_back</span>
+        Makaleye Dön
+      </button>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN LAYOUT
+  ══════════════════════════════════════════════════════════════ -->
+  @if (!loading() && !error() && !submitted()) {
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stats-bar__content">
+        <div class="stat-item">
+          <span class="material-symbols-rounded stat-item__icon">group</span>
+          <span class="stat-item__val">{{ experts().length }}</span>
+          <span class="stat-item__label">Toplam Hakem</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="material-symbols-rounded stat-item__icon stat-item__icon--green">check_circle</span>
+          <span class="stat-item__val stat-item__val--green">{{ availableCount() }}</span>
+          <span class="stat-item__label">Müsait</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="material-symbols-rounded stat-item__icon stat-item__icon--red">schedule</span>
+          <span class="stat-item__val stat-item__val--red">{{ busyCount() }}</span>
+          <span class="stat-item__label">Yoğun</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="material-symbols-rounded stat-item__icon">filter_list</span>
+          <span class="stat-item__val">{{ filteredExperts().length }}</span>
+          <span class="stat-item__label">Filtrelenen</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="assign-body">
+
+      <!-- ─── LEFT: Expert browser ─── -->
+      <section class="assign-left">
+
+        <!-- Header -->
+        <div class="assign-left__head">
+          <div class="assign-left__title-row">
+            <div class="assign-left__icon">
+              <span class="material-symbols-rounded">manage_accounts</span>
+            </div>
+            <div>
+              <h1 class="assign-left__title">Hakem Listesi</h1>
+              <p class="assign-left__sub">Makaleye uygun uzmanları bulun ve seçin</p>
+            </div>
+          </div>
+
+          <!-- Search + Sort row -->
+          <div class="assign-toolbar">
+            <div class="assign-search">
+              <span class="material-symbols-rounded assign-search__icon">search</span>
+              <input
+                class="assign-search__input"
+                type="text"
+                placeholder="İsim veya uzmanlık alanı ara..."
+                [ngModel]="searchQuery()"
+                (ngModelChange)="onSearch($event)">
+              @if (searchQuery()) {
+                <button class="assign-search__clear" (click)="onSearch('')">
+                  <span class="material-symbols-rounded">close</span>
+                </button>
+              }
+            </div>
+
+            <!-- Sort select -->
+            <div class="assign-sort">
+              <span class="material-symbols-rounded assign-sort__icon">sort</span>
+              <select class="assign-sort__select"
+                [ngModel]="sortBy()"
+                (ngModelChange)="onSortChange($event)">
+                <option value="name">İsme Göre</option>
+                <option value="workload-asc">İş Yükü ↑</option>
+                <option value="workload-desc">İş Yükü ↓</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Specialty chips -->
+          <div class="assign-chips">
+            <button class="assign-chip" [class.assign-chip--on]="selectedSpecialty() === null"
+              (click)="setSpecialtyFilter(null)">Tümü</button>
+            @for (s of uniqueSpecialties; track s) {
+              <button class="assign-chip" [class.assign-chip--on]="selectedSpecialty() === s"
+                (click)="setSpecialtyFilter(s)">{{ s }}</button>
+            }
+          </div>
+        </div>
+
+        <!-- Expert list -->
+        <div class="assign-list">
+          @if (filteredExperts().length === 0) {
+            <div class="assign-empty">
+              <span class="material-symbols-rounded assign-empty__icon">person_search</span>
+              <p class="assign-empty__text">Sonuç bulunamadı</p>
+              <p class="assign-empty__hint">Farklı bir arama terimi deneyin</p>
+            </div>
+          }
+
+          @for (expert of paginatedExperts(); track expert.id) {
+            <div class="expert-row"
+              [class.expert-row--selected]="isSelected(expert.id)"
+              [class.expert-row--locked]="!isSelected(expert.id) && selectedIds().length >= 3"
+              (click)="selectedIds().length < 3 || isSelected(expert.id) ? toggleExpert(expert.id) : null">
+
+              <!-- Avatar -->
+              <div class="expert-av" [class.expert-av--on]="isSelected(expert.id)">
+                {{ expert.name.charAt(0).toUpperCase() }}
+              </div>
+
+              <!-- Info -->
+              <div class="expert-info">
+                <div class="expert-name-row">
+                  <p class="expert-name">{{ expert.name }}</p>
+                  <span class="expert-badge" [ngClass]="workloadClass(expert.activeTasks)">
+                    {{ workloadLabel(expert.activeTasks) }}
+                  </span>
+                </div>
+                <div class="expert-meta">
+                  <span class="expert-area">{{ expert.expertiseAreas[0] }}</span>
+                  <span class="expert-sep">·</span>
+                  <div class="expert-load">
+                    @for (i of [1,2,3]; track i) {
+                      <div class="expert-load__bar"
+                        [ngClass]="i <= expert.activeTasks
+                          ? (expert.activeTasks >= 3 ? 'expert-load__bar--high'
+                              : expert.activeTasks === 2 ? 'expert-load__bar--mid'
+                              : 'expert-load__bar--low')
+                          : 'expert-load__bar--off'">
+                      </div>
+                    }
+                  </div>
+                  <span class="expert-tasks-text">{{ expert.activeTasks }} aktif görev</span>
+                </div>
+              </div>
+
+              <!-- Checkbox -->
+              <div class="expert-check" [class.expert-check--on]="isSelected(expert.id)">
+                @if (isSelected(expert.id)) {
+                  <span class="material-symbols-rounded" style="font-size:13px;font-variation-settings:'wght' 700;">check</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="assign-pagination">
+          <span class="assign-pagination__count">{{ filteredExperts().length }} hakem listeleniyor</span>
+          <div class="assign-pagination__controls">
+            <button class="assign-pagination__btn" [disabled]="currentPage() === 1" (click)="prevPage()">
+              <span class="material-symbols-rounded">chevron_left</span>
+            </button>
+            <span class="assign-pagination__page">{{ currentPage() }} / {{ totalPages() }}</span>
+            <button class="assign-pagination__btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+              <span class="material-symbols-rounded">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─── RIGHT: Assignment panel ─── -->
+      <aside class="assign-right">
+
+        <!-- Panel header -->
+        <div class="assign-right__head">
+          <div>
+            <p class="assign-right__label">Seçilen Hakemler</p>
+          </div>
+          <div class="assign-right__head-actions">
+            <div class="assign-right__counter" [class.assign-right__counter--done]="selectedIds().length === 3">
+              {{ selectedIds().length }}/3
+            </div>
+            @if (selectedIds().length > 0) {
+              <button class="assign-clear-btn" (click)="clearAll()" title="Tümünü temizle">
+                <span class="material-symbols-rounded">clear_all</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Segment progress -->
+        <div class="assign-segments">
+          @for (s of [1,2,3]; track s) {
+            <div class="assign-segment" [class.assign-segment--filled]="s <= selectedIds().length"></div>
+          }
+        </div>
+
+        <!-- Slots -->
+        <div class="assign-slots">
+
+          @for (e of selectedExperts(); track e.id; let i = $index) {
+            <div class="slot-card">
+              <div class="slot-card__top">
+                <div class="slot-card__av">{{ e.name.charAt(0).toUpperCase() }}</div>
+                <div class="slot-card__info">
+                  <p class="slot-card__name">{{ e.name }}</p>
+                  <p class="slot-card__area">{{ e.expertiseAreas[0] }}</p>
+                </div>
+                <span class="slot-card__num">{{ i + 1 }}</span>
+              </div>
+              <!-- Workload row -->
+              <div class="slot-card__load">
+                <div class="slot-load-bars">
+                  @for (j of [1,2,3]; track j) {
+                    <div class="slot-load-bar"
+                      [ngClass]="j <= e.activeTasks
+                        ? (e.activeTasks >= 3 ? 'slot-load-bar--high' : e.activeTasks === 2 ? 'slot-load-bar--mid' : 'slot-load-bar--low')
+                        : 'slot-load-bar--off'">
+                    </div>
+                  }
+                </div>
+                <span class="slot-card__workload-text">{{ e.activeTasks }} aktif görev</span>
+              </div>
+              <button class="slot-card__remove" (click)="toggleExpert(e.id)">
+                <span class="material-symbols-rounded">remove_circle_outline</span>
+                Kaldır
+              </button>
+            </div>
+          }
+
+          @for (i of emptySlots(); track i) {
+            <div class="slot-empty">
+              <div class="slot-empty__icon">
+                <span class="material-symbols-rounded">add</span>
+              </div>
+              <div>
+                <p class="slot-empty__title">Boş Slot {{ selectedIds().length + i }}</p>
+                <p class="slot-empty__hint">Listeden hakem seçin</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Workload summary (when ≥1 selected) -->
+        @if (selectedIds().length > 0) {
+          <div class="assign-workload-summary">
+            <span class="material-symbols-rounded assign-workload-summary__icon">insights</span>
+            <span class="assign-workload-summary__text">
+              Seçilen hakemlerin toplam iş yükü:
+              <strong>{{ totalWorkload() }} görev</strong>
+            </span>
+          </div>
+        }
+
+        <!-- Divider -->
+        <div class="assign-right__divider"></div>
+
+        <!-- CTA -->
+        <div class="assign-right__cta">
+          <button class="assign-btn-primary"
+            [class.assign-btn-primary--off]="!canSubmit()"
+            [disabled]="!canSubmit()"
+            (click)="assign()">
+            @if (submitting()) {
+              <div class="assign-spinner assign-spinner--sm"></div>
+              Atanıyor...
+            } @else {
+              <span class="material-symbols-rounded">{{ selectedIds().length > 0 ? 'how_to_reg' : 'person_search' }}</span>
+              {{ selectedIds().length > 0 ? 'Hakemleri Ata' : 'Hakem Seçin' }}
+            }
+          </button>
+          <p class="assign-right__hint">En az 1, en fazla 3 hakem seçebilirsiniz</p>
+        </div>
+
+      </aside>
+    </div>
+  }
+</div>

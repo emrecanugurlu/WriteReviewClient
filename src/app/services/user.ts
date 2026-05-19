@@ -20,4 +20,16 @@ export class User {
   removeRole(userId: string, roleName: string) {
     return this.http.delete<any>(`/api/appusers/${userId}/roles/${roleName}`);
   }
+
+  deleteUser(userId: string) {
+    return this.http.delete<any>(`/api/appusers/${userId}`);
+  }
+
+  createUser(body: { fullName: string; userName: string; email: string; password: string }) {
+    return this.http.post<any>('/api/appusers', body);
+  }
+
+  updateUser(userId: string, body: { fullName: string; email: string }) {
+    return this.http.put<any>(`/api/appusers/${userId}`, body);
+  }
 }

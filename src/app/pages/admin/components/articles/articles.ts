@@ -5,10 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { ArticleService } from '../../../../services/article/article-service';
 import { PageResult } from '../../../../entities/interfaces/page-result';
 import { ManagerArticleListItem } from '../../../../entities/interfaces/manager-article-list-item';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DeleteConfirmDialog } from '../../../../views/delete-confirm-dialog/delete-confirm-dialog';
 
 @Component({
   selector: 'app-articles',
-  imports: [DatePipe, NgClass, FormsModule],
+  imports: [DatePipe, NgClass, FormsModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './articles.html',
   styleUrl: './articles.scss'
 })
@@ -16,8 +19,10 @@ export class Articles implements OnInit {
   Math = Math;
   router = inject(Router);
   articleService = inject(ArticleService);
+  private _snackBar = inject(MatSnackBar);
+  private _dialog = inject(MatDialog);
 
-  articles: PageResult<ManagerArticleListItem> = { page: 1, pageSize: 10, total: 0, items: [] };
+  articles = signal<PageResult<ManagerArticleListItem>>({ page: 1, pageSize: 10, total: 0, items: [] });
   loading = signal(true);
   error = signal<string | null>(null);
   ok = signal(false);
@@ -29,9 +34,14 @@ export class Articles implements OnInit {
   itemsPerPage = 8;
 
   ngOnInit(): void {
-    this.articleService.getAllArticles(1, 100).subscribe({
+    this.fetchArticles();
+  }
+
+  fetchArticles() {
+    this.loading.set(true);
+    this.articleService.getAllArticles(1, 1000).subscribe({
       next: (res) => {
-        this.articles = res;
+        this.articles.set(res);
         this.loading.set(false);
         this.ok.set(true);
       },
@@ -43,8 +53,24 @@ export class Articles implements OnInit {
     });
   }
 
+  deleteArticle(event: Event, article: ManagerArticleListItem) {
+    event.stopPropagation();
+    const dialogRef = this._dialog.open(DeleteConfirmDialog, {
+      data: {
+        label: 'Makaleyi Sil',
+        title: article.title,
+        successMessage: 'Makale Silindi',
+        deleteFn: () => this.articleService.deleteArticle(article.id)
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.fetchArticles();
+    });
+  }
+
   filteredArticles = computed(() => {
-    let items = this.articles.items;
+    let items = this.articles().items;
     const q = this.searchQuery().toLowerCase().trim();
     const status = this.activeStatusFilter();
 
@@ -62,7 +88,7 @@ export class Articles implements OnInit {
   });
 
   countByStatus = (status: number) =>
-    this.articles.items.filter(a => a.status === status).length;
+    this.articles().items.filter(a => a.status === status).length;
 
   setStatusFilter(status: number | null) {
     this.activeStatusFilter.set(status);

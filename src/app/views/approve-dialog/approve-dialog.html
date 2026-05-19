@@ -1,67 +1,65 @@
-<!-- Başarı Durumu -->
-@if (success) {
-  <div class="flex flex-col items-center text-center p-10 gap-6">
-    <div class="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center">
-      <span class="material-symbols-rounded text-emerald-500 text-[52px]">check_circle</span>
+<div class="flex flex-col select-none" style="width: 420px;">
+
+  @if (success) {
+
+    <!-- Başarı -->
+    <div class="flex flex-col items-center text-center px-8 py-10 gap-4">
+      <div class="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center">
+        <span class="material-symbols-rounded text-white text-[20px]">check</span>
+      </div>
+      <div>
+        <p class="text-[14px] font-bold text-slate-900 mb-1">Makale Onaylandı</p>
+        <p class="text-[13px] text-slate-400 leading-relaxed">Yazar otomatik olarak bilgilendirilecektir.</p>
+      </div>
+      <button (click)="close()"
+        class="mt-2 px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all">
+        Kapat
+      </button>
     </div>
-    <div>
-      <h2 class="text-2xl font-black text-slate-800 mb-2" style="font-family:'Outfit',sans-serif;">Makale Onaylandı!</h2>
-      <p class="text-slate-500 text-sm">Makale başarıyla onaylanmış ve yazar bilgilendirilecektir.</p>
-    </div>
-    <button (click)="close()"
-      class="px-8 py-3 rounded-full bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/25">
-      Kapat
-    </button>
-  </div>
-} @else {
-  <!-- Onay İçeriği -->
-  <div class="flex flex-col font-sans text-slate-800 select-none">
+
+  } @else {
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-7 pt-7 pb-5">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
-          <span class="material-symbols-rounded text-white text-[26px]">task_alt</span>
+        <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-white text-[17px]">task_alt</span>
         </div>
         <div>
-          <h2 class="font-black text-slate-800 text-xl leading-tight" style="font-family:'Outfit',sans-serif;">Makaleyi Onayla</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Editör kararı — geri alınamaz</p>
+          <p class="text-[13px] font-semibold text-slate-800">Makaleyi Onayla</p>
+          <p class="text-[11px] text-slate-400">Editör kararı — geri alınamaz</p>
         </div>
       </div>
       <button (click)="close()"
-        class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
         <span class="material-symbols-rounded text-[20px]">close</span>
       </button>
     </div>
 
-    <!-- Uyarı Bandı -->
-    <div class="mx-6 mb-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
-      <span class="material-symbols-rounded text-emerald-600 text-[20px] shrink-0 mt-0.5">info</span>
-      <p class="text-sm text-emerald-800 leading-relaxed">
-        Bu makale <strong>"Onaylandı"</strong> statüsüne geçecek ve yazara otomatik bildirim gönderilecektir. Bu işlem geri alınamaz.
+    <!-- Bilgi -->
+    <div class="px-6 py-6">
+      <p class="text-[13px] text-slate-500 leading-relaxed">
+        Bu makale <span class="font-semibold text-slate-700">Onaylandı</span> statüsüne geçecek ve yazara otomatik bildirim gönderilecektir. İşlem tamamlandıktan sonra geri alınamaz.
       </p>
     </div>
 
-    <!-- Ayraç -->
-    <div class="h-px bg-slate-100 mx-6 mb-6"></div>
-
-    <!-- Footer Aksiyonlar -->
-    <div class="px-6 pb-7 flex items-center gap-3">
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-slate-100">
       <button (click)="close()"
-        class="flex-1 px-5 py-3 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all">
+        class="px-4 py-2.5 rounded-lg text-slate-600 text-[13px] font-medium hover:bg-slate-100 transition-all">
         Vazgeç
       </button>
       <button (click)="confirm()" [disabled]="loading"
-        class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-all shadow-lg shadow-emerald-600/25 disabled:opacity-60 disabled:cursor-not-allowed">
+        class="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed">
         @if (loading) {
-          <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+          <span class="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
           İşleniyor...
         } @else {
-          <span class="material-symbols-rounded text-[18px]">check_circle</span>
+          <span class="material-symbols-rounded text-[15px]">check</span>
           Onayla
         }
       </button>
     </div>
 
-  </div>
-}
+  }
+</div>

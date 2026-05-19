@@ -1,74 +1,72 @@
-<div class="flex flex-col font-sans text-slate-800 select-none">
+<div class="flex flex-col select-none" style="width: 420px;">
 
-  <!-- Başarı Overlay -->
   @if (success) {
-    <div class="flex flex-col items-center text-center p-10 gap-6">
-      <div class="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center">
-        <span class="material-symbols-rounded text-red-500 text-[52px]">cancel</span>
+
+    <!-- Başarı -->
+    <div class="flex flex-col items-center text-center px-8 py-10 gap-4">
+      <div class="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center">
+        <span class="material-symbols-rounded text-white text-[20px]">check</span>
       </div>
       <div>
-        <h2 class="text-2xl font-black text-slate-800 mb-2" style="font-family:'Outfit',sans-serif;">Makale Reddedildi</h2>
-        <p class="text-slate-500 text-sm">Red bildirimi yazara iletildi.</p>
+        <p class="text-[14px] font-bold text-slate-900 mb-1">Makale Reddedildi</p>
+        <p class="text-[13px] text-slate-400 leading-relaxed">Red bildirimi yazara iletildi.</p>
       </div>
       <button (click)="closeRejectDialog()"
-        class="px-8 py-3 rounded-full bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition-all">
+        class="mt-2 px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all">
         Kapat
       </button>
     </div>
+
   } @else {
 
     <!-- Header -->
-    <div class="flex items-center justify-between px-7 pt-7 pb-5">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/25">
-          <span class="material-symbols-rounded text-white text-[26px]">block</span>
+        <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-white text-[17px]">block</span>
         </div>
         <div>
-          <h2 class="font-black text-slate-800 text-xl leading-tight" style="font-family:'Outfit',sans-serif;">Makaleyi Reddet</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Bu işlem geri alınamaz</p>
+          <p class="text-[13px] font-semibold text-slate-800">Makaleyi Reddet</p>
+          <p class="text-[11px] text-slate-400">Bu işlem geri alınamaz</p>
         </div>
       </div>
       <button (click)="closeRejectDialog()"
-        class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
         <span class="material-symbols-rounded text-[20px]">close</span>
       </button>
     </div>
 
-    <!-- Uyarı Bandı -->
-    <div class="mx-6 mb-5 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
-      <span class="material-symbols-rounded text-red-500 text-[20px] shrink-0 mt-0.5">warning</span>
-      <p class="text-sm text-red-800 leading-relaxed">
-        Makale kalıcı olarak <strong>"Reddedildi"</strong> statüsüne geçecek ve yazara bildirim gönderilecektir.
+    <!-- Uyarı -->
+    <div class="mx-6 mt-5 mb-4 flex items-start gap-2.5 p-3.5 rounded-lg bg-red-50 border border-red-100">
+      <span class="material-symbols-rounded text-red-400 text-[16px] shrink-0 mt-0.5">warning</span>
+      <p class="text-[12px] text-red-700 leading-relaxed">
+        Makale kalıcı olarak <strong>Reddedildi</strong> statüsüne geçecek ve yazara bildirim gönderilecektir.
       </p>
     </div>
 
     <!-- Red Nedeni -->
-    <div class="px-6 mb-2">
-      <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
-        Red Nedeni / Editör Notu <span class="text-red-400 normal-case font-normal tracking-normal">(zorunlu)</span>
+    <div class="px-6 pb-5">
+      <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+        Red Nedeni <span class="text-red-400">*</span>
       </label>
       <textarea rows="4" [(ngModel)]="reason"
-        class="w-full text-sm px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 focus:border-red-400 focus:ring-4 focus:ring-red-50 focus:bg-white outline-none resize-none leading-relaxed transition-all"
-        placeholder="Örn: Çalışma dergi kapsamı dışındadır veya metodolojik eksiklikler mevcuttur..."></textarea>
+        class="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 text-[13px] focus:border-slate-400 focus:bg-white outline-none resize-none leading-relaxed transition-all"
+        placeholder="Makale neden reddedildi? Yazara iletilecektir."></textarea>
     </div>
 
-    <!-- Ayraç -->
-    <div class="h-px bg-slate-100 mx-6 my-4"></div>
-
     <!-- Footer -->
-    <div class="px-6 pb-7 flex items-center gap-3">
+    <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-slate-100">
       <button (click)="closeRejectDialog()"
-        class="flex-1 px-5 py-3 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all">
+        class="px-4 py-2.5 rounded-lg text-slate-600 text-[13px] font-medium hover:bg-slate-100 transition-all">
         Vazgeç
       </button>
       <button (click)="confirmReject()" [disabled]="!reason.trim() || loading"
-        class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-bold transition-all shadow-lg shadow-red-600/25 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[13px] font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed">
         @if (loading) {
-          <span class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+          <span class="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
           İşleniyor...
         } @else {
-          <span class="material-symbols-rounded text-[18px]">block</span>
-          Makaleyi Reddet
+          Reddet
         }
       </button>
     </div>

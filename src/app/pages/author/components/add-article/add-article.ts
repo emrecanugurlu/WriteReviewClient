@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, OnInit } from '@angular/core';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ArticleService } from '../../../../services/article/article-service';
+import { CategoryService, CategoryDto } from '../../../../services/category/category-service';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -17,38 +18,111 @@ import { RouterLink } from '@angular/router';
   templateUrl: './add-article.html',
   styleUrl: './add-article.scss',
 })
-export class AddArticle {
+export class AddArticle implements OnInit {
+
+  @ViewChild('editor') editorRef!: ElementRef<HTMLDivElement>;
 
   submissionType: 'file' | 'text' = 'text';
   isDragging: boolean = false;
-
   showSuccessAlert: boolean = false;
 
-  private _snackbar = inject(MatSnackBar)
+  editorIsEmpty = signal(true);
+  editorCharCount = 0;
+  activeFormats = new Set<string>();
+
+  private _snackbar = inject(MatSnackBar);
   loading = signal(false);
   ok = signal(false);
-  error = signal("");
+  error = signal('');
+  categories = signal<CategoryDto[]>([]);
 
   fb = inject(FormBuilder);
   private articleApi = inject(ArticleService);
+  private categoryService = inject(CategoryService);
 
   formGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
-    summary: ['', [Validators.required, Validators.maxLength(400)]],
     content: ['', [Validators.required, Validators.minLength(100)]],
-    category: [null as string | null, Validators.required],
-    tags: ['']
+    categoryId: [null as string | null, Validators.required]
   });
 
+  ngOnInit() {
+    this.categoryService.getAll().subscribe({
+      next: (data) => this.categories.set(data),
+      error: () => this.error.set('Kategoriler yüklenemedi.')
+    });
+  }
 
   formData = {
     title: '',
-    abstract: '',
     category: '',
-    keywords: '',
     file: null as File | null,
     content: ''
   };
+
+  // ── Rich Text Formatting ─────────────────────────────────────────────────
+
+  format(command: string, value?: string) {
+    if (command === 'formatBlock' && value) {
+      document.execCommand(command, false, `<${value}>`);
+    } else {
+      document.execCommand(command, false, value ?? undefined);
+    }
+    this.editorRef?.nativeElement.focus();
+    setTimeout(() => this.updateActiveFormats(), 0);
+  }
+
+  isFormatActive(command: string, value?: string): boolean {
+    if (command === 'formatBlock' && value) {
+      return this.activeFormats.has(`${command}:${value.toLowerCase()}`);
+    }
+    return this.activeFormats.has(command);
+  }
+
+  updateActiveFormats() {
+    const booleanCmds = ['bold', 'italic', 'underline', 'strikeThrough', 'insertUnorderedList', 'insertOrderedList'];
+    booleanCmds.forEach(cmd => {
+      try {
+        if (document.queryCommandState(cmd)) {
+          this.activeFormats.add(cmd);
+        } else {
+          this.activeFormats.delete(cmd);
+        }
+      } catch { /* ignore */ }
+    });
+
+    // Handle formatBlock values
+    const blocks = ['h2', 'h3', 'p'];
+    try {
+      const currentBlock = document.queryCommandValue('formatBlock').toLowerCase();
+      blocks.forEach(tag => {
+        // currentBlock might be 'h2' or '<h2' or full tag depending on browser
+        if (currentBlock.includes(tag)) {
+          this.activeFormats.add(`formatBlock:${tag}`);
+        } else {
+          this.activeFormats.delete(`formatBlock:${tag}`);
+        }
+      });
+    } catch { /* ignore */ }
+  }
+
+  onEditorInput(event: Event) {
+    const el = event.target as HTMLElement;
+    const text = el.innerText?.trim() ?? '';
+    this.editorIsEmpty.set(text.length === 0);
+    this.editorCharCount = text.length;
+    this.formGroup.get('content')?.setValue(el.innerHTML, { emitEvent: false });
+    this.updateActiveFormats();
+  }
+
+  onEditorKeydown(event: KeyboardEvent) {
+    // Allow default browser Ctrl+B/I/U, just update format state after
+    if (event.ctrlKey || event.metaKey) {
+      setTimeout(() => this.updateActiveFormats(), 0);
+    }
+  }
+
+  // ── Submission ────────────────────────────────────────────────────────────
 
   setSubmissionType(type: 'file' | 'text') {
     this.submissionType = type;
@@ -56,17 +130,13 @@ export class AddArticle {
 
   handleSubmit(isSubmitting: boolean = true) {
     this.ok.set(false);
-    this.error.set("");
+    this.error.set('');
     this.loading.set(true);
-
-    const v = this.formGroup.value;
 
     const payload = {
       title: this.formGroup.value.title!,
-      summary: this.formGroup.value.summary!,
       content: this.formGroup.value.content!,
-      categoryId: "1589dc9d-6906-46c5-ac08-5cb49c9b1be5",
-      tags: this.formGroup.value.tags!,
+      categoryId: this.formGroup.value.categoryId!
     };
 
     this.articleApi.createArticle({ articleDto: payload, isSubmit: isSubmitting }).subscribe({
@@ -74,18 +144,17 @@ export class AddArticle {
         this.ok.set(true);
         this.loading.set(false);
         this.showSuccessAlert = true;
-        console.log(_res)
       },
-      error: err => { this.error.set('Kaydetme sırasında hata oluştu.'); this.loading.set(false); console.error(err); }
-    })
+      error: err => {
+        this.error.set('Kaydetme sırasında hata oluştu.');
+        this.loading.set(false);
+        console.error(err);
+      }
+    });
   }
 
+  // ── File Upload ───────────────────────────────────────────────────────────
 
-
-
-
-
-  // --- File Upload Logic ---
   onDragOver(e: DragEvent) {
     e.preventDefault();
     this.isDragging = true;
@@ -99,14 +168,14 @@ export class AddArticle {
   onDrop(e: DragEvent) {
     e.preventDefault();
     this.isDragging = false;
-    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+    if (e.dataTransfer?.files?.length) {
       this.validateAndSetFile(e.dataTransfer.files[0]);
     }
   }
 
   onFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
+    if (input.files?.length) {
       this.validateAndSetFile(input.files[0]);
     }
   }

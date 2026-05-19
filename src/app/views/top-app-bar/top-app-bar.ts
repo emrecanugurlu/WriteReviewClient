@@ -1,15 +1,17 @@
 import {Component, inject} from '@angular/core';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatToolbar} from '@angular/material/toolbar';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {NgClass} from '@angular/common';
 import {AuthService} from '../../services/auth/auth-service';
+import {ThemeService} from '../../services/theme/theme-service';
 
 @Component({
   selector: 'app-top-app-bar',
   imports: [
     MatButton,
+    MatIconButton,
     MatIcon,
     MatToolbar,
     RouterLink,
@@ -20,5 +22,6 @@ import {AuthService} from '../../services/auth/auth-service';
   styleUrl: './top-app-bar.scss'
 })
 export class TopAppBar {
-  authService = inject(AuthService)
+  authService = inject(AuthService);
+  themeService = inject(ThemeService);
 }

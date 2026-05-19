@@ -1,114 +1,78 @@
-<mat-sidenav-container class="admin-container bg-transparent">
-  <mat-sidenav #sidenav mode="side" opened class="admin-sidenav bg-transparent border-none w-[280px] p-4 flex flex-col">
-    
-    <!-- Logo Area -->
-    <div class="logo-container flex items-center gap-3 px-4 py-6 mb-4">
-      <div class="w-10 h-10 rounded-2xl bg-cyan-600 flex items-center justify-center text-white shadow-lg shadow-cyan-600/30">
-        <span class="material-symbols-rounded text-2xl">edit_document</span>
-      </div>
-      <div>
-        <h1 class="text-xl font-bold tracking-tight text-slate-800 m-0 leading-none" style="font-family: 'Outfit', sans-serif;">WriteReview</h1>
-        <span class="text-xs font-medium text-slate-500">Admin Portal</span>
+<mat-sidenav-container class="admin-container">
+
+  <mat-sidenav #sidenav mode="side" opened class="admin-sidenav w-[220px]">
+
+    <!-- Logo -->
+    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-white text-[16px]">edit_document</span>
+        </div>
+        <span class="text-[15px] font-bold text-slate-800 dark:text-slate-100" style="font-family:'Outfit',sans-serif;">WriteReview</span>
       </div>
     </div>
 
-    <!-- Navigation List -->
-    <div class="nav-list flex flex-col gap-2 px-2">
-      <!-- Nav Item -->
-      <a routerLink="dashboard" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:scale-110">dashboard</span>
+    <!-- Nav -->
+    <nav class="px-3 py-4 flex flex-col gap-0.5">
+      <a routerLink="dashboard" routerLinkActive="active-link"
+         class="nav-item flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-rounded text-[18px]">dashboard</span>
         <span>Dashboard</span>
       </a>
-      
-      <a routerLink="users" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:scale-110">group</span>
-        <span>Kullanıcı Yönetimi</span>
+      <a routerLink="users" routerLinkActive="active-link"
+         class="nav-item flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-rounded text-[18px]">group</span>
+        <span>Kullanıcılar</span>
       </a>
-      
-      <a routerLink="articles" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:scale-110">article</span>
-        <span>Makale Yönetimi</span>
+      <a routerLink="articles" routerLinkActive="active-link"
+         class="nav-item flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-rounded text-[18px]">article</span>
+        <span>Makaleler</span>
       </a>
-
-      <a routerLink="expertise-areas" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:scale-110">category</span>
+      <a routerLink="expertise-areas" routerLinkActive="active-link"
+         class="nav-item flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-rounded text-[18px]">category</span>
         <span>Uzmanlık Alanları</span>
       </a>
-
-      <a routerLink="roles" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:scale-110">admin_panel_settings</span>
-        <span>Rol Yönetimi</span>
+      <a routerLink="roles" routerLinkActive="active-link"
+         class="nav-item flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-rounded text-[18px]">shield</span>
+        <span>Roller</span>
       </a>
-    </div>
+    </nav>
 
-    <!-- Settings at Bottom -->
-    <div class="mt-auto px-2 pb-4 pt-10">
-      <a routerLink="settings" routerLinkActive="active-link" class="nav-item group flex items-center gap-3 px-4 py-3.5 rounded-full text-slate-600 font-medium transition-all duration-300 hover:bg-slate-200/50 hover:text-slate-900 cursor-pointer">
-        <span class="material-symbols-rounded text-[22px] transition-transform duration-300 group-hover:rotate-45">settings</span>
-        <span>Ayarlar</span>
-      </a>
+    <!-- Bottom -->
+    <div class="mt-auto px-3 py-4 border-t border-slate-100 dark:border-slate-700">
+      <button (click)="logout()"
+         class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all">
+        <span class="material-symbols-rounded text-[18px]">logout</span>
+        <span>Çıkış Yap</span>
+      </button>
     </div>
 
   </mat-sidenav>
 
-  <mat-sidenav-content class="admin-content bg-transparent p-4 pl-0">
-    <!-- Main White Surface Container -->
-    <div class="main-surface bg-white/90 backdrop-blur-xl rounded-[2.5rem] w-full h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex flex-col overflow-hidden relative">
-      
-      <!-- Topbar -->
-      <header class="topbar flex items-center justify-between px-8 py-4 border-b border-slate-100/50 bg-white/50 backdrop-blur-md z-10">
-        
-        <!-- Search -->
-        <div class="search-bar flex items-center bg-slate-100/70 rounded-full px-4 py-2.5 w-[300px] transition-all focus-within:bg-white focus-within:shadow-md focus-within:ring-2 focus-within:ring-cyan-100">
-          <span class="material-symbols-rounded text-slate-400 mr-2">search</span>
-          <input type="text" placeholder="Ara..." class="bg-transparent border-none outline-none text-sm text-slate-700 w-full placeholder-slate-400">
+  <mat-sidenav-content class="admin-content flex flex-col bg-slate-50 dark:bg-slate-900">
+
+    <!-- Topbar -->
+    <header class="flex items-center justify-end px-6 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 shrink-0">
+      <button class="admin-theme-toggle" (click)="themeService.toggle()"
+              [title]="themeService.isDark() ? 'Açık Temaya Geç' : 'Koyu Temaya Geç'">
+        <span class="material-symbols-rounded">{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+      <a routerLink="profile"
+        class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+        <div class="w-7 h-7 rounded-full bg-slate-900 flex items-center justify-center text-white text-xs font-bold shrink-0">
+          {{ adminName().charAt(0).toUpperCase() }}
         </div>
+        <span class="text-[13px] font-semibold text-slate-700 dark:text-slate-200">{{ adminName() }}</span>
+      </a>
+    </header>
 
-        <!-- Right Actions -->
-        <div class="actions flex items-center gap-2">
-          <button mat-icon-button class="notification-btn relative !text-slate-500 hover:!text-cyan-600 hover:!bg-cyan-50 transition-colors">
-            <mat-icon><span class="material-symbols-rounded">notifications</span></mat-icon>
-            <span class="absolute top-[8px] right-[8px] w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
-          
-          <div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
-          
-          <!-- User Profile -->
-          <button mat-button [matMenuTriggerFor]="profileMenu" class="!px-2 !py-1 !rounded-full hover:!bg-slate-50 transition-colors h-auto">
-            <div class="flex items-center gap-3">
-              <div class="flex flex-col items-end">
-                <span class="text-sm font-semibold text-slate-700 leading-tight">Admin User</span>
-                <span class="text-xs text-slate-500">Sistem Yöneticisi</span>
-              </div>
-              <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&rounded=true&bold=true" alt="Profile" class="w-10 h-10 rounded-full shadow-sm">
-              <mat-icon class="!text-slate-400 !m-0 !w-5 !h-5"><span class="material-symbols-rounded">expand_more</span></mat-icon>
-            </div>
-          </button>
-          
-          <mat-menu #profileMenu="matMenu" class="profile-menu rounded-2xl mt-2 backdrop-blur-xl bg-white/95">
-            <button mat-menu-item class="!rounded-xl !mx-2 !w-[calc(100%-16px)] !mb-1">
-              <mat-icon><span class="material-symbols-rounded">person</span></mat-icon>
-              <span>Profilim</span>
-            </button>
-            <button mat-menu-item class="!rounded-xl !mx-2 !w-[calc(100%-16px)] !mb-1">
-              <mat-icon><span class="material-symbols-rounded">tune</span></mat-icon>
-              <span>Tercihler</span>
-            </button>
-            <div class="h-[1px] bg-slate-100 my-1 mx-2"></div>
-            <button mat-menu-item (click)="logout()" class="!text-red-600 !rounded-xl !mx-2 !w-[calc(100%-16px)] hover:!bg-red-50 !mt-1">
-              <mat-icon class="!text-red-600"><span class="material-symbols-rounded">logout</span></mat-icon>
-              <span>Çıkış Yap</span>
-            </button>
-          </mat-menu>
-        </div>
-      </header>
+    <main class="content-wrapper flex-1 overflow-auto">
+      <router-outlet></router-outlet>
+    </main>
 
-      <!-- Outlet Wrapper -->
-      <main class="content-wrapper flex-1 overflow-auto p-8 relative bg-slate-50/30">
-        <router-outlet></router-outlet>
-      </main>
-
-    </div>
   </mat-sidenav-content>
 
 </mat-sidenav-container>

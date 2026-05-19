@@ -1,287 +1,220 @@
-<div class="min-h-screen bg-[#f4f7f9] font-sans text-slate-800 selection:bg-cyan-200 selection:text-cyan-900 pb-40">
+@if (loading()) {
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+    <span class="material-symbols-rounded animate-spin text-slate-400 dark:text-slate-500 text-3xl">progress_activity</span>
+  </div>
+} @else if (error()) {
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+    <p class="text-red-500 text-[14px] font-medium">{{ error() }}</p>
+  </div>
+} @else {
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900">
 
-  <!-- ── FLOATING HEADER ── -->
-  <div class="pt-6 px-4 sm:px-8">
-    <header class="max-w-7xl mx-auto bg-white/80 backdrop-blur-2xl rounded-full h-16 flex items-center justify-between px-3 sm:px-5 border border-white shadow-[0_8px_30px_rgba(8,145,178,0.06)] sticky top-6 z-40">
-      
-      <div class="flex items-center gap-3 pl-2 min-w-0">
-        <a href="/expert-panel" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all shrink-0">
-          <span class="material-symbols-rounded text-[22px]">arrow_back</span>
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-50 h-14">
+    <div class="px-6 h-full flex items-center justify-between max-w-6xl mx-auto">
+      <div class="flex items-center gap-3 min-w-0">
+        <a routerLink="/expert-panel"
+           class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shrink-0">
+          <span class="material-symbols-rounded text-[20px]">arrow_back</span>
         </a>
-        <div class="h-5 w-px bg-slate-200 shrink-0"></div>
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="text-xs font-bold text-slate-400 hidden sm:block shrink-0 uppercase tracking-widest">Hakem Paneli</span>
-          <span class="material-symbols-rounded text-slate-300 text-[16px] hidden sm:block shrink-0">chevron_right</span>
-          <span class="text-sm font-bold text-slate-700 truncate" style="font-family:'Outfit',sans-serif;">
-            Makale İnceleme
-          </span>
+        <div class="w-px h-4 bg-slate-200 dark:bg-slate-600 shrink-0"></div>
+        <p class="text-[13px] font-medium text-slate-700 dark:text-slate-200 truncate">Makale Değerlendirme</p>
+      </div>
+      <span class="text-[11px] font-semibold px-2.5 py-1 rounded border shrink-0 ml-4"
+            [ngClass]="{
+              'bg-amber-50 text-amber-700 border-amber-200': assignedArticleDetail()?.status === 0,
+              'bg-emerald-50 text-emerald-700 border-emerald-200': assignedArticleDetail()?.status === 1,
+              'bg-red-50 text-red-700 border-red-200': assignedArticleDetail()?.status === 2,
+              'bg-cyan-50 text-cyan-700 border-cyan-200': assignedArticleDetail()?.status === 3
+            }">
+        {{ getStatusLabel(assignedArticleDetail()?.status) }}
+      </span>
+    </div>
+  </header>
+
+  <!-- Body Container -->
+  <div class="flex flex-col min-h-[calc(100vh-56px)] w-full max-w-6xl mx-auto px-6 py-8">
+
+    <!-- ─── Top Horizontal Info Banner ─── -->
+    <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg p-8 flex flex-col md:flex-row gap-8 justify-between items-start mb-8 shadow-sm">
+
+      <!-- Article Metadata & Title -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-3 mb-4">
+          @if (assignedArticleDetail()?.articleCategory) {
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-white text-[11px] font-bold tracking-wide uppercase">
+              {{ assignedArticleDetail()?.articleCategory }}
+            </span>
+          }
+          <div class="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-[12px] font-medium">
+            <span class="material-symbols-rounded text-[14px]">calendar_today</span>
+            {{ assignedArticleDetail()?.reviewedAt | date:'dd MMM yyyy' }}
+          </div>
+        </div>
+
+        <h1 class="text-xl font-bold text-slate-900 dark:text-slate-50 leading-snug mb-5">
+          {{ assignedArticleDetail()?.articleTitle }}
+        </h1>
+
+        <!-- Author Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white text-[14px] font-bold shrink-0 shadow-sm">
+            {{ assignedArticleDetail()?.authorName?.charAt(0) || '?' }}
+          </div>
+          <div class="min-w-0">
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium leading-none mb-1">Yazar (Kör Hakemlik)</p>
+            <p class="text-[13px] font-semibold text-slate-800 dark:text-slate-100 truncate">{{ assignedArticleDetail()?.authorName }}</p>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2.5 pr-1">
-        <div class="w-9 h-9 rounded-full bg-cyan-50 flex items-center justify-center text-cyan-600 shadow-sm border border-cyan-100">
-          <span class="material-symbols-rounded text-[18px]">gavel</span>
+      <!-- Actions Card -->
+      <div class="w-full md:w-[320px] shrink-0 bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 rounded-lg p-5 shadow-sm">
+        <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 mb-4">
+          <span class="material-symbols-rounded text-[16px]">gavel</span>
+          <p class="text-[11px] font-semibold uppercase tracking-wider">Değerlendirme Kararı</p>
         </div>
+
+        @if (assignedArticleDetail()?.status === 0) {
+          <div class="flex flex-col gap-2">
+            <button (click)="openDialog('accept')"
+              class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-semibold transition-all shadow-sm">
+              <span class="material-symbols-rounded text-[16px]">thumb_up</span>
+              Kabul Et
+            </button>
+            <button (click)="openDialog('revision')"
+              class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 text-[13px] font-semibold transition-all shadow-sm">
+              <span class="material-symbols-rounded text-[16px]">plumbing</span>
+              Revizyon İste
+            </button>
+            <button (click)="openDialog('reject')"
+              class="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-[13px] font-semibold transition-all shadow-sm">
+              <span class="material-symbols-rounded text-[16px]">thumb_down</span>
+              Reddet
+            </button>
+          </div>
+        } @else {
+          <div class="bg-white dark:bg-slate-600 border border-slate-100 dark:border-slate-500 rounded-md p-4 text-center">
+            <span class="material-symbols-rounded text-slate-300 dark:text-slate-400 text-[24px] mb-2">task_alt</span>
+            <p class="text-[12px] font-medium text-slate-500 dark:text-slate-400">Bu makale için kararınızı zaten ilettiniz.</p>
+          </div>
+        }
       </div>
-    </header>
+
+    </div>
+
+    <!-- ─── Main Text Content ─── -->
+    <main class="flex-1 w-full max-w-6xl mx-auto py-4">
+
+      <!-- Ayraç + Tam Metin -->
+      @if (assignedArticleDetail()?.articleContent) {
+        <div>
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
+              <span class="material-symbols-rounded text-[18px]">article</span>
+            </div>
+            <p class="text-[12px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tam Metin</p>
+          </div>
+          <div class="text-[14px] text-slate-800 dark:text-slate-100 leading-[1.9] font-serif whitespace-pre-line px-2">
+            <span [innerHTML]="assignedArticleDetail()?.articleContent"></span>
+          </div>
+        </div>
+      }
+
+      @if (!assignedArticleDetail()?.articleContent) {
+        <div class="flex flex-col items-center justify-center text-center py-32 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 mt-8">
+          <span class="material-symbols-rounded text-[48px] text-slate-200 dark:text-slate-700 mb-4">description</span>
+          <p class="text-[15px] font-medium text-slate-500 dark:text-slate-400">Bu makale için herhangi bir metin içeriği bulunmuyor.</p>
+        </div>
+      }
+
+    </main>
+
   </div>
 
   <!-- ── TOAST BİLDİRİMİ ── -->
   @if (showToast()) {
-    <div class="fixed top-8 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl text-sm font-semibold animate-scale-in">
-      <span class="material-symbols-rounded text-emerald-400 text-[20px]">check_circle</span>
+    <div class="fixed bottom-8 right-8 z-[60] flex items-center gap-3 bg-slate-900 text-white px-5 py-3 rounded-lg shadow-lg text-[13px] font-medium animate-scale-in">
+      <span class="material-symbols-rounded text-emerald-400 text-[18px]">check_circle</span>
       Değerlendirmeniz başarıyla sisteme iletildi!
     </div>
   }
 
-  <!-- ── KARAR MODALI (M3 Expressive) ── -->
+  <!-- ── KARAR MODALI ── -->
   @if (activeDialog()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
-      <div (click)="closeDialog()" class="absolute inset-0 bg-slate-900/30 backdrop-blur-md"></div>
-      
-      <div class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
-        <!-- Başlık Bandı -->
-        <div class="px-8 pt-8 pb-6 border-b border-slate-50 flex items-start gap-5 shrink-0">
-          <div class="w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-sm"
-               [ngClass]="{
-                 'bg-emerald-50 border border-emerald-100': activeDialog() === 'accept',
-                 'bg-amber-50 border border-amber-100': activeDialog() === 'revision',
-                 'bg-red-50 border border-red-100': activeDialog() === 'reject'
-               }">
-            <span class="material-symbols-rounded text-[28px]"
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div (click)="closeDialog()" class="absolute inset-0 bg-slate-900/40"></div>
+
+      <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Başlık -->
+        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-start justify-between bg-slate-50 dark:bg-slate-700">
+          <div>
+            <h2 class="text-[15px] font-bold text-slate-800 dark:text-slate-100 mb-1">
+              {{ activeDialog() === 'accept' ? 'Yayına Kabul Et' : activeDialog() === 'revision' ? 'Revizyon Talep Et' : 'Makaleyi Reddet' }}
+            </h2>
+            <p class="text-[12px] text-slate-500 dark:text-slate-400">
+              {{ activeDialog() === 'accept'
+                ? 'Bu makalenin yayına uygun olduğunu onaylıyorsunuz.'
+                : activeDialog() === 'revision'
+                  ? 'Yazardan makale üzerinde düzeltmeler yapmasını talep ediyorsunuz.'
+                  : 'Bu makalenin yayın standartlarını karşılamadığına karar verdiniz.' }}
+            </p>
+          </div>
+          <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500">
+            <span class="material-symbols-rounded text-[18px]"
                   [ngClass]="{
-                    'text-emerald-600': activeDialog() === 'accept',
-                    'text-amber-600': activeDialog() === 'revision',
-                    'text-red-600': activeDialog() === 'reject'
+                    'text-emerald-500': activeDialog() === 'accept',
+                    'text-amber-500': activeDialog() === 'revision',
+                    'text-red-500': activeDialog() === 'reject'
                   }">
               {{ activeDialog() === 'accept' ? 'thumb_up' : activeDialog() === 'revision' ? 'plumbing' : 'thumb_down' }}
             </span>
           </div>
-          <div class="flex-1 mt-1">
-            <h2 class="text-2xl font-extrabold text-slate-800" style="font-family:'Outfit',sans-serif;">
-              {{ activeDialog() === 'accept' ? 'Yayına Kabul Et' : activeDialog() === 'revision' ? 'Revizyon Talep Et' : 'Makaleyi Reddet' }}
-            </h2>
-            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">
-              {{ activeDialog() === 'accept' 
-                ? 'Bu makalenin bilimsel standartları karşıladığını ve yayına uygun olduğunu onaylıyorsunuz.' 
-                : activeDialog() === 'revision' 
-                  ? 'Yazardan makale üzerinde düzeltmeler yapmasını talep ediyorsunuz. Lütfen istenen düzeltmeleri net bir şekilde belirtin.' 
-                  : 'Bu makalenin yayın standartlarını karşılamadığına karar verdiniz. Red gerekçenizi mutlaka detaylandırın.' }}
-            </p>
-          </div>
         </div>
 
-        <!-- Gövde / Form -->
-        <div class="px-8 py-6 overflow-y-auto relative">
+        <!-- Form -->
+        <div class="p-6 overflow-y-auto relative bg-white dark:bg-slate-800">
           @if (submitting()) {
-            <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center gap-4 animate-fade-in">
-              <div class="w-12 h-12 rounded-full border-4 border-cyan-100 border-t-cyan-600 animate-spin"></div>
-              <p class="text-sm font-bold text-slate-600">Kararınız İletiliyor...</p>
+            <div class="absolute inset-0 bg-white/80 dark:bg-slate-800/80 z-20 flex flex-col items-center justify-center gap-3">
+              <span class="material-symbols-rounded animate-spin text-slate-400 dark:text-slate-500 text-3xl">progress_activity</span>
+              <p class="text-[13px] font-medium text-slate-500 dark:text-slate-400">Kararınız İletiliyor...</p>
             </div>
           }
 
-          <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
-            {{ activeDialog() === 'accept' ? 'Editöre Dahili Not (İsteğe Bağlı)' : activeDialog() === 'revision' ? 'Revizyon Gerekçeleri ve İstenen Değişiklikler' : 'Bilimsel Red Gerekçesi' }}
+          <label class="block text-[12px] font-semibold text-slate-700 dark:text-slate-200 mb-2">
+            {{ activeDialog() === 'accept' ? 'Editöre Dahili Not (İsteğe Bağlı)' : activeDialog() === 'revision' ? 'Revizyon Gerekçeleri' : 'Ret Gerekçesi' }}
           </label>
-          <textarea [(ngModel)]="reviewNote" rows="6"
-            class="w-full px-5 py-4 rounded-[1.5rem] border border-slate-200 bg-slate-50/50 text-slate-700 text-[15px] placeholder-slate-300 resize-none outline-none transition-all leading-relaxed focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 shadow-inner"
-            placeholder="Kapsamlı görüş ve değerlendirmelerinizi buraya yazabilirsiniz..."></textarea>
-          
-          <!-- Bilgi Kutusu -->
+          <textarea [(ngModel)]="reviewNote" rows="5"
+            class="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 dark:text-slate-100 text-slate-800 text-[13px] placeholder-slate-400 dark:placeholder-slate-500 resize-none outline-none focus:bg-white dark:focus:bg-slate-600 focus:border-slate-400 transition-all"
+            placeholder="Görüşlerinizi buraya yazabilirsiniz..."></textarea>
+
           @if (activeDialog() !== 'accept') {
-            <div class="mt-4 flex items-start gap-3 p-4 rounded-[1.5rem] bg-cyan-50/50 border border-cyan-100">
-              <span class="material-symbols-rounded text-cyan-600 text-[20px] shrink-0 mt-0.5">info</span>
-              <p class="text-[13px] text-cyan-800 leading-relaxed font-medium">Yazdığınız notlar editör onayından geçtikten sonra isminiz gizlenerek (Kör Hakemlik ilkesi gereği) yazara iletilecektir.</p>
+            <div class="mt-3 flex items-start gap-2 p-3 rounded-lg bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600">
+              <span class="material-symbols-rounded text-slate-400 dark:text-slate-500 text-[16px] shrink-0 mt-0.5">info</span>
+              <p class="text-[12px] text-slate-500 dark:text-slate-400 font-medium">Yazdığınız notlar editör onayından geçtikten sonra isminiz gizlenerek yazara iletilecektir.</p>
             </div>
           }
         </div>
 
-        <!-- Alt Bar -->
-        <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+        <!-- Footer -->
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-100 dark:border-slate-600 flex items-center justify-end gap-2">
           <button (click)="closeDialog()" [disabled]="submitting()"
-            class="px-6 py-3 rounded-full text-sm font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            class="px-5 py-2 rounded-lg text-[13px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
             İptal
           </button>
           <button (click)="submitReview()" [disabled]="submitting()"
-            class="flex items-center gap-2 px-8 py-3 rounded-full text-sm font-black text-white transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:translate-y-0 disabled:cursor-not-allowed"
+            class="flex items-center gap-1.5 px-6 py-2 rounded-lg text-[13px] font-medium text-white transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             [ngClass]="{
-              'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30': activeDialog() === 'accept',
-              'bg-amber-500 hover:bg-amber-600 shadow-amber-500/30': activeDialog() === 'revision',
-              'bg-red-500 hover:bg-red-600 shadow-red-500/30': activeDialog() === 'reject'
+              'bg-emerald-600 hover:bg-emerald-700': activeDialog() === 'accept',
+              'bg-amber-500 hover:bg-amber-600': activeDialog() === 'revision',
+              'bg-red-500 hover:bg-red-600': activeDialog() === 'reject'
             }">
-            Kararı İlet
-            <span class="material-symbols-rounded text-[18px]">send</span>
+            <span class="material-symbols-rounded text-[16px]">send</span>
+            Gönder
           </button>
         </div>
       </div>
     </div>
   }
-
-  <!-- ── ANA İÇERİK ── -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 flex flex-col gap-8 relative z-10">
-
-    <!-- 1. HERO KARTI: Makale Üst Bilgileri -->
-    <div class="bg-white rounded-[3rem] p-8 sm:p-12 shadow-[0_20px_40px_rgba(8,145,178,0.05)] border border-white relative">
-      <!-- M3 Dışavurumcu Arkaplan Dokunuşu -->
-      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-50 to-blue-50/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-      
-      <div class="relative z-10">
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-          <span class="px-4 py-1.5 bg-slate-900 text-white rounded-full text-[11px] font-black uppercase tracking-widest shadow-sm">
-            {{ assignedArticleDetail()?.articleCategory }}
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors"
-                [ngClass]="{
-                  'bg-amber-50 text-amber-700 border-amber-100': assignedArticleDetail()?.status === 0,
-                  'bg-emerald-50 text-emerald-700 border-emerald-100': assignedArticleDetail()?.status === 1,
-                  'bg-red-50 text-red-700 border-red-100': assignedArticleDetail()?.status === 2,
-                  'bg-cyan-50 text-cyan-700 border-cyan-100': assignedArticleDetail()?.status === 3
-                }">
-            <span class="w-1.5 h-1.5 rounded-full animate-pulse"
-                  [ngClass]="{
-                    'bg-amber-500': assignedArticleDetail()?.status === 0,
-                    'bg-emerald-500': assignedArticleDetail()?.status === 1,
-                    'bg-red-500': assignedArticleDetail()?.status === 2,
-                    'bg-cyan-500': assignedArticleDetail()?.status === 3
-                  }"></span>
-            {{ getStatusLabel(assignedArticleDetail()?.status) }}
-          </span>
-        </div>
-
-        <h1 class="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-slate-800 leading-[1.15] mb-8" style="font-family:'Outfit',sans-serif;">
-          {{ assignedArticleDetail()?.articleTitle }}
-        </h1>
-
-        <div class="flex flex-wrap items-center gap-x-8 gap-y-4 pt-8 border-t border-slate-100">
-          <!-- Yazar -->
-          <div class="flex items-center gap-3">
-             <div class="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 text-sm font-black border-2 border-white shadow-sm">
-                {{ assignedArticleDetail()?.authorName?.charAt(0) || '?' }}
-             </div>
-             <div>
-               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Yazar (Kör Hakemlik)</p>
-               <p class="text-sm font-bold text-slate-700">{{ assignedArticleDetail()?.authorName }}</p>
-             </div>
-          </div>
-          <!-- Tarih -->
-          <div class="flex items-center gap-3">
-             <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 border-2 border-white shadow-sm">
-                <span class="material-symbols-rounded text-[18px]">event</span>
-             </div>
-             <div>
-               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Atanma Tarihi</p>
-               <p class="text-sm font-bold text-slate-700">{{ assignedArticleDetail()?.reviewedAt | date:'dd MMMM yyyy' }}</p>
-             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. ÖZET VE DOSYALAR GRID -->
-    @if (assignedArticleDetail()?.articleSummary) {
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-        
-        <!-- Özet Paneli (Geniş) -->
-        <div class="md:col-span-3 bg-cyan-600 rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_40px_rgba(8,145,178,0.15)] relative text-white">
-          <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-          
-          <div class="relative z-10">
-            <div class="flex items-center gap-2 mb-6">
-              <span class="material-symbols-rounded text-cyan-200 text-[24px]">format_quote</span>
-              <h3 class="text-lg font-bold tracking-wide" style="font-family:'Outfit',sans-serif;">Makale Özeti</h3>
-            </div>
-            <p class="text-cyan-50 leading-relaxed text-[15px] sm:text-[16px] text-justify" style="font-family: Georgia, serif;">
-              {{ assignedArticleDetail()?.articleSummary }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Dosyalar Paneli (Dar) -->
-        <div class="md:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-[0_10px_30px_rgba(8,145,178,0.04)] border border-slate-100 flex flex-col justify-center">
-          <h3 class="text-sm font-black text-slate-800 mb-5 flex items-center gap-2 uppercase tracking-widest">
-            <span class="material-symbols-rounded text-cyan-500 text-[20px]">folder_zip</span>
-            Ek Dosyalar
-          </h3>
-          
-          <div class="flex flex-col gap-3">
-            <a href="#" class="flex items-center gap-4 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 hover:border-red-200 hover:bg-red-50/50 transition-all group">
-              <div class="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
-                PDF
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-700 truncate">Tam_Makale_Taslak.pdf</p>
-                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">2.4 MB</p>
-              </div>
-              <span class="material-symbols-rounded text-slate-300 group-hover:text-red-500 transition-colors">download</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-4 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
-              <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
-                DOC
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-700 truncate">Ek_Tablolar_Veriler.docx</p>
-                <p class="text-[11px] font-semibold text-slate-400 mt-0.5">850 KB</p>
-              </div>
-              <span class="material-symbols-rounded text-slate-300 group-hover:text-blue-500 transition-colors">download</span>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    }
-
-    <!-- 3. TAM METİN (OKUMA KAĞIDI) -->
-    <div class="bg-white rounded-[3rem] p-8 sm:p-20 shadow-[0_15px_50px_rgba(0,0,0,0.03)] border border-slate-100 mb-10">
-      <div class="flex items-center justify-center gap-4 mb-14">
-        <div class="h-px bg-slate-100 flex-1"></div>
-        <span class="flex items-center gap-2 px-5 py-2 rounded-full bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-100">
-          <span class="material-symbols-rounded text-[14px]">article</span>
-          Makale Tam Metni
-        </span>
-        <div class="h-px bg-slate-100 flex-1"></div>
-      </div>
-
-      <div class="max-w-3xl mx-auto"
-           style="font-family: 'Lora', Georgia, 'Times New Roman', serif; font-size: 19px; line-height: 2; color: #334155; text-align: justify; letter-spacing: 0.01em; word-spacing: 0.05em;">
-        <div [innerHTML]="assignedArticleDetail()?.articleContent"
-             style="white-space: pre-line;"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ── FLOATING ACTION BAR (M3 STICKY BOTTOM) ── -->
-  @if (assignedArticleDetail()?.status === 0) {
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-[600px]">
-      <div class="bg-slate-900/95 backdrop-blur-2xl p-2.5 rounded-full shadow-[0_20px_40px_rgba(0,0,0,0.25)] border border-slate-700 flex items-center gap-2 justify-between">
-        
-        <div class="hidden sm:flex items-center pl-4 pr-3 py-1 border-r border-slate-700">
-          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Karar Ver</span>
-        </div>
-
-        <div class="flex items-center gap-1.5 flex-1 justify-center sm:justify-start">
-          <button (click)="openDialog('accept')"
-            class="flex items-center gap-2 px-4 py-3 rounded-full bg-slate-800 hover:bg-emerald-500 hover:text-white text-emerald-400 text-sm font-bold transition-all flex-1 justify-center group">
-            <span class="material-symbols-rounded text-[18px] group-hover:scale-110 transition-transform">thumb_up</span>
-            <span class="hidden sm:block">Kabul Et</span>
-          </button>
-
-          <button (click)="openDialog('revision')"
-            class="flex items-center gap-2 px-4 py-3 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-white text-amber-400 text-sm font-bold transition-all flex-1 justify-center group">
-            <span class="material-symbols-rounded text-[18px] group-hover:scale-110 transition-transform">plumbing</span>
-            <span class="hidden sm:block">Revizyon</span>
-          </button>
-
-          <button (click)="openDialog('reject')"
-            class="flex items-center gap-2 px-4 py-3 rounded-full bg-slate-800 hover:bg-red-500 hover:text-white text-red-400 text-sm font-bold transition-all flex-1 justify-center group">
-            <span class="material-symbols-rounded text-[18px] group-hover:scale-110 transition-transform">thumb_down</span>
-            <span class="hidden sm:block">Reddet</span>
-          </button>
-        </div>
-        
-      </div>
-    </div>
-  }
-
 </div>
+}

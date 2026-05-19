@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RoleDto, RoleService } from '../../../../services/role/role-service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RoleDetailDialog } from './dialogs/role-detail-dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatIconModule, MatButtonModule],
   templateUrl: './roles.html',
   styleUrl: './roles.scss'
 })

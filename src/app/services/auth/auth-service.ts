@@ -69,4 +69,30 @@ export class AuthService {
       return null;
     }
   }
+
+  getMe(): Observable<MeDto> {
+    return this.http.get<MeDto>('/api/auth/me');
+  }
+
+  updateMe(fullName: string): Observable<{ id: string; fullName: string; email: string }> {
+    return this.http.put<{ id: string; fullName: string; email: string }>('/api/auth/me', { fullName });
+  }
 }
+
+export type MeDto = {
+  id: string;
+  fullName: string;
+  email: string;
+  roles: string[];
+  stats: {
+    articleCount: number;
+    approvedCount: number;
+    pendingCount: number;
+    reviewedCount: number;
+    assignedCount: number;
+    acceptedCount: number;
+    expertPendingCount: number;
+    managerPendingCount: number;
+    joinYear: number;
+  };
+};

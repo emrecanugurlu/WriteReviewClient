@@ -1,24 +1,115 @@
+<div class="p-8 max-w-4xl mx-auto">
 
-<div style="display:flex; justify-content: right; margin-bottom: 20px">
-  <button matButton="filled" (click)="opeAddDialog()"><mat-icon>add</mat-icon>Ekle</button>
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Uzmanlık Alanları</h1>
+      <p class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Makale kategorilerini ve uzmanlık alanlarını yönetin</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 w-44 focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100 dark:focus-within:ring-slate-700 transition-all">
+        <span class="material-symbols-rounded text-slate-400 dark:text-slate-500 text-[16px]">search</span>
+        <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+               placeholder="Alan ara..." class="bg-transparent border-none outline-none text-[13px] text-slate-700 dark:text-slate-100 w-full placeholder-slate-400 dark:placeholder-slate-500">
+      </div>
+      <button (click)="openAddDialog()"
+              class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium px-4 py-1.5 rounded-lg transition-colors shrink-0">
+        <span class="material-symbols-rounded text-[16px]">add</span>
+        Yeni Alan
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center justify-center py-20">
+      <span class="material-symbols-rounded animate-spin text-slate-400 dark:text-slate-500 text-3xl">progress_activity</span>
+    </div>
+  } @else if (error()) {
+    <div class="bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800/50 rounded-xl p-4 flex items-center gap-2">
+      <span class="material-symbols-rounded text-red-400 text-[18px]">error</span>
+      <p class="text-[13px] text-red-600 dark:text-red-400">{{ error() }}</p>
+    </div>
+  } @else {
+
+    <!-- List -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+
+      <!-- Head -->
+      <div class="grid grid-cols-12 px-5 py-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20">
+        <div class="col-span-6 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Alan Adı</div>
+        <div class="col-span-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Atanmış Kullanıcı</div>
+        <div class="col-span-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-right">İşlem</div>
+      </div>
+
+      <!-- Rows -->
+      <div class="divide-y divide-slate-50 dark:divide-slate-700">
+        @if (filteredAreas().length === 0) {
+          <div class="py-16 flex flex-col items-center text-center">
+            @if (searchQuery()) {
+              <span class="material-symbols-rounded text-slate-200 dark:text-slate-700 text-[40px] block mb-3">search_off</span>
+              <p class="text-sm text-slate-400 dark:text-slate-500">"{{ searchQuery() }}" için sonuç bulunamadı</p>
+              <button (click)="searchQuery.set('')" class="mt-3 text-[12px] text-slate-500 dark:text-slate-400 underline">Aramayı temizle</button>
+            } @else {
+              <span class="material-symbols-rounded text-slate-200 dark:text-slate-700 text-[40px] block mb-3">category</span>
+              <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">Henüz alan eklenmemiş</p>
+              <p class="text-xs text-slate-400 dark:text-slate-500">Yeni Alan butonunu kullanarak başlayın.</p>
+            }
+          </div>
+        } @else {
+          @for (data of filteredAreas(); track data.id) {
+            <div class="grid grid-cols-12 px-5 py-3.5 hover:bg-slate-50/40 dark:hover:bg-slate-700 transition-colors items-center group">
+
+              <div class="col-span-6 flex items-center gap-3">
+                <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-rounded text-slate-500 dark:text-slate-400 text-[15px]">psychology_alt</span>
+                </div>
+                <span class="text-[13px] font-medium text-slate-700 dark:text-slate-200">{{ data.name }}</span>
+              </div>
+
+              <div class="col-span-3">
+                @if (data.users && data.users.length > 0) {
+                  <div class="flex items-center gap-1.5">
+                    <div class="flex -space-x-1.5">
+                      @for (u of data.users.slice(0, 3); track u.id) {
+                        <div class="w-6 h-6 rounded-full bg-slate-900 dark:bg-slate-200 flex items-center justify-center text-white dark:text-slate-900 text-[9px] font-bold border-2 border-white dark:border-slate-800" [title]="u.name">
+                          {{ u.name.charAt(0) }}
+                        </div>
+                      }
+                    </div>
+                    <span class="text-[12px] text-slate-400 dark:text-slate-500">{{ data.users.length }} kişi</span>
+                  </div>
+                } @else {
+                  <span class="text-[12px] text-slate-300 dark:text-slate-600 italic">Atanmamış</span>
+                }
+              </div>
+
+              <div class="col-span-3 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button (click)="openAssignUsers(data)" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" title="Kullanıcı Ata">
+                  <span class="material-symbols-rounded text-[15px]">group_add</span>
+                </button>
+                <button (click)="editArea(data)" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" title="Düzenle">
+                  <span class="material-symbols-rounded text-[15px]">edit</span>
+                </button>
+                <button (click)="deleteArea(data.id)" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors" title="Sil">
+                  <span class="material-symbols-rounded text-[15px]">delete</span>
+                </button>
+              </div>
+
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="px-5 py-3 border-t border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-800/20">
+        <span class="text-[12px] text-slate-400 dark:text-slate-500">
+          {{ filteredAreas().length }}
+          @if (searchQuery()) { / {{ expertiseAreas().length }} }
+          alan
+        </span>
+      </div>
+
+    </div>
+  }
+
 </div>
-
-<table class="table">
-  <thead>
-  <tr class="table-dark">
-    <th scope="col" >Id</th>
-    <th scope="col">Name</th>
-    <th scope="col">İşlem</th>
-  </tr>
-  </thead>
-  <tbody>
-    @for (data of expertiseAreas(); track data.id){
-      <tr>
-        <th >{{data.id}}</th>
-        <td>{{data.name}}</td>
-        <td><button matButton="outlined" style="margin-right: 5px"><mat-icon>edit</mat-icon>Düzenle</button>
-        <button matButton="outlined" style="color: #cc0000"><mat-icon>delete</mat-icon>Sil</button></td>
-      </tr>
-    }
-  </tbody>
-</table>

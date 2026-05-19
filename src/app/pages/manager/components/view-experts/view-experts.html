@@ -1,0 +1,213 @@
+<div class="view-experts-page">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TOP NAV BAR
+  ══════════════════════════════════════════════════════════════ -->
+  <header class="view-experts-nav">
+    <div class="view-experts-nav__content">
+      <!-- Left: back + breadcrumb -->
+      <div class="view-experts-nav__left">
+        <button (click)="goBack()" class="view-experts-nav__back">
+          <span class="material-symbols-rounded">arrow_back</span>
+        </button>
+        <div class="view-experts-nav__divider"></div>
+        <nav class="view-experts-nav__breadcrumb">
+          <span class="view-experts-nav__breadcrumb-parent">Makale Detayı</span>
+          <span class="material-symbols-rounded view-experts-nav__breadcrumb-sep">chevron_right</span>
+          <span class="view-experts-nav__breadcrumb-current">Hakem Dönütleri</span>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════════════════════════════ -->
+  @if (loading()) {
+    <div class="view-experts-state-center">
+      <div class="view-experts-spinner"></div>
+      <p class="view-experts-state-text">Makale ve hakem bilgileri yükleniyor...</p>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ERROR
+  ══════════════════════════════════════════════════════════════ -->
+  @if (error() && !loading()) {
+    <div class="view-experts-state-center">
+      <div class="view-experts-state-icon view-experts-state-icon--error">
+        <span class="material-symbols-rounded">error_outline</span>
+      </div>
+      <p class="view-experts-state-title">Bir Hata Oluştu</p>
+      <p class="view-experts-state-text">{{ error() }}</p>
+      <button (click)="goBack()" class="btn-outline">Geri Dön</button>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN LAYOUT
+  ══════════════════════════════════════════════════════════════ -->
+  @if (!loading() && !error() && article()) {
+
+    <div class="view-experts-body">
+      <div class="content-wrapper">
+
+        <!-- Header Section (Black Card) -->
+        <div class="bg-slate-900 rounded-2xl p-8 mb-6 shadow-md flex flex-col md:flex-row justify-between items-start gap-6">
+          <div class="flex gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0">
+              <span class="material-symbols-rounded text-[24px]">rate_review</span>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-white mb-1">Hakem Dönütleri ve Raporlar</h1>
+              <p class="text-[13px] text-slate-400">Makaleye atanan hakemlerin durumlarını ve ilettikleri raporları inceleyin.</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          @if (article()?.status === 2) {
+            <div class="flex flex-col items-end gap-3">
+              @if (isWaitingForExperts()) {
+                <div class="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-400 text-[13px] font-bold">
+                  <span class="material-symbols-rounded text-[18px]">hourglass_empty</span>
+                  Tüm hakemlerin değerlendirmeyi tamamlaması bekleniyor
+                </div>
+              }
+              <div class="flex items-center gap-3">
+                <button (click)="openRejectDialog()" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border-2 border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50 font-bold text-[13px]" [disabled]="isWaitingForExperts()">
+                  <span class="material-symbols-rounded text-[18px]">close</span>
+                  Reddet
+                </button>
+                <button (click)="requestRevision()" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border-2 border-amber-500/20 text-amber-400 hover:bg-amber-500/10 transition-colors disabled:opacity-50 font-bold text-[13px]" [disabled]="isWaitingForExperts()">
+                  <span class="material-symbols-rounded text-[18px]">edit_note</span>
+                  Revizyon İste
+                </button>
+                <button (click)="approveArticle()" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 text-slate-900 hover:bg-emerald-400 transition-colors disabled:opacity-50 font-bold text-[13px]" [disabled]="isWaitingForExperts()">
+                  <span class="material-symbols-rounded text-[18px]">check</span>
+                  Onayla
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Stats bar (Moved below the header card) -->
+        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+          <div class="flex items-center gap-3 px-4">
+            <span class="material-symbols-rounded text-[20px] text-slate-400 dark:text-slate-500">groups</span>
+            <div>
+              <p class="text-[16px] font-bold text-slate-800 dark:text-slate-100 leading-none mb-1">{{ experts().length }}</p>
+              <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Toplam Atanan</p>
+            </div>
+          </div>
+          <div class="w-px h-10 bg-slate-100 dark:bg-slate-700 hidden md:block"></div>
+
+          <div class="flex items-center gap-3 px-4">
+            <span class="material-symbols-rounded text-[20px] text-amber-500">hourglass_empty</span>
+            <div>
+              <p class="text-[16px] font-bold text-amber-600 leading-none mb-1">{{ pendingCount() }}</p>
+              <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bekliyor</p>
+            </div>
+          </div>
+          <div class="w-px h-10 bg-slate-100 dark:bg-slate-700 hidden md:block"></div>
+
+          <div class="flex items-center gap-3 px-4">
+            <span class="material-symbols-rounded text-[20px] text-emerald-500">check_circle</span>
+            <div>
+              <p class="text-[16px] font-bold text-emerald-600 leading-none mb-1">{{ acceptedCount() }}</p>
+              <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kabul Etti</p>
+            </div>
+          </div>
+          <div class="w-px h-10 bg-slate-100 dark:bg-slate-700 hidden md:block"></div>
+
+          <div class="flex items-center gap-3 px-4">
+            <span class="material-symbols-rounded text-[20px] text-red-500">cancel</span>
+            <div>
+              <p class="text-[16px] font-bold text-red-600 leading-none mb-1">{{ rejectedCount() }}</p>
+              <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Reddetti</p>
+            </div>
+          </div>
+          <div class="w-px h-10 bg-slate-100 dark:bg-slate-700 hidden md:block"></div>
+
+          <div class="flex items-center gap-3 px-4">
+            <span class="material-symbols-rounded text-[20px] text-blue-500">description</span>
+            <div>
+              <p class="text-[16px] font-bold text-blue-600 leading-none mb-1">{{ completedCount() }}</p>
+              <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rapor İletildi</p>
+            </div>
+          </div>
+        </div>
+
+        @if (experts().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-rounded empty-state__icon">group_off</span>
+            <p class="empty-state__title">Henüz Hakem Atanmamış</p>
+            <p class="empty-state__desc">Bu makale için henüz bir hakem ataması yapılmamıştır.</p>
+            <button class="btn-primary mt-4" [routerLink]="['/assign-experts', articleId()]">
+              <span class="material-symbols-rounded">person_add</span>
+              Hakem Ata
+            </button>
+          </div>
+        } @else {
+          <!-- Expert Cards List -->
+          <div class="expert-cards-list">
+            @for (expert of experts(); track expert.expertName) {
+              <div class="expert-card">
+
+                <!-- Card Header -->
+                <div class="expert-card__header">
+                  <div class="expert-profile">
+                    <div class="expert-avatar">
+                      {{ expert.expertName.charAt(0).toUpperCase() }}
+                    </div>
+                    <div class="expert-info">
+                      <h3 class="expert-name">{{ expert.expertName }}</h3>
+                      <p class="expert-role">Uzman Hakem</p>
+                    </div>
+                  </div>
+
+                  <!-- Status Badge -->
+                  <div class="status-badge" [ngClass]="getExpertStatusClass(expert.status)">
+                    <span class="material-symbols-rounded status-icon">
+                      {{ getExpertStatusIcon(expert.status) }}
+                    </span>
+                    {{ getExpertStatusLabel(expert.status) }}
+                  </div>
+                </div>
+
+                <!-- Feedback Content -->
+                <div class="expert-card__body">
+                  @if (expert.feedback) {
+                    <div class="feedback-box">
+                      <div class="feedback-box__icon">
+                        <span class="material-symbols-rounded">format_quote</span>
+                      </div>
+                      <div class="feedback-box__content">
+                        <p class="feedback-text">{{ expert.feedback }}</p>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="no-feedback-box">
+                      <span class="material-symbols-rounded">pending</span>
+                      <p>
+                        @if (expert.status === 0) {
+                          Hakemden yanıt bekleniyor...
+                        } @else if (expert.status === 1) {
+                          Hakem değerlendirmeyi kabul etti, rapor bekleniyor...
+                        } @else if (expert.status === 2) {
+                          Hakem değerlendirmeyi reddetti.
+                        } @else {
+                          Herhangi bir not iletilmedi.
+                        }
+                      </p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

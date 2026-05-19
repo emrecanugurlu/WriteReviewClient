@@ -1,64 +1,75 @@
-<div class="flex flex-col font-sans text-slate-800 select-none">
-  <!-- ── HEADER ── -->
-  <div class="flex items-center justify-between px-6 pt-6 pb-5 border-b border-slate-100 shrink-0">
+<div class="flex flex-col select-none" style="width: 420px;">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
-        <span class="material-symbols-rounded text-white text-[22px]">group</span>
+      <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shrink-0">
+        <span class="material-symbols-rounded text-white text-[17px]">group</span>
       </div>
       <div>
-        <h2 class="font-bold text-slate-800 text-lg leading-tight" style="font-family:'Outfit',sans-serif;">Atanan Hakemler</h2>
-        <p class="text-xs text-slate-400">Bu makaleyi değerlendiren uzmanlar</p>
+        <p class="text-[13px] font-semibold text-slate-800">Atanan Hakemler</p>
+        <p class="text-[11px] text-slate-400">{{ data.experts.length }} hakem atanmış</p>
       </div>
     </div>
     <button (click)="closeDialog()"
-      class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
+      class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
       <span class="material-symbols-rounded text-[20px]">close</span>
     </button>
   </div>
 
-  <!-- ── CONTENT ── -->
-  <div class="p-6 flex flex-col gap-3">
+  <!-- Liste -->
+  <div class="p-4 flex flex-col gap-2">
     @for (expert of data.experts; track expert.expertName) {
-      <div class="flex flex-col gap-3 p-4 rounded-[1.5rem] bg-slate-50 border border-slate-100 shadow-sm">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0">
-            {{ expert.expertName.charAt(0).toUpperCase() }}
+      <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+
+        <!-- Hakem Başlık -->
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
+              {{ expert.expertName.charAt(0).toUpperCase() }}
+            </div>
+            <div class="min-w-0">
+              <p class="text-[13px] font-semibold text-slate-800 truncate">{{ expert.expertName }}</p>
+              <p class="text-[11px] text-slate-400">Uzman Hakem</p>
+            </div>
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-slate-800 truncate">{{ expert.expertName }}</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Uzman Hakem</p>
-          </div>
-          
-          <!-- Status Badge -->
-          <div class="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border shrink-0"
-               [ngClass]="{
-                 'bg-amber-50 text-amber-700 border-amber-200': expert.status === 0,
-                 'bg-emerald-50 text-emerald-700 border-emerald-200': expert.status === 1,
-                 'bg-red-50 text-red-700 border-red-200': expert.status === 2,
-                 'bg-blue-50 text-blue-700 border-blue-200': expert.status === 3
-               }">
-            {{ getExpertStatusLabel(expert.status) }}
+
+          <!-- Durum -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <div class="w-1.5 h-1.5 rounded-full"
+              [ngClass]="{
+                'bg-amber-400': expert.status === 0,
+                'bg-emerald-400': expert.status === 1,
+                'bg-red-400': expert.status === 2,
+                'bg-slate-400': expert.status === 3
+              }"></div>
+            <span class="text-[11px] font-medium text-slate-500">
+              {{ getExpertStatusLabel(expert.status) }}
+            </span>
           </div>
         </div>
 
+        <!-- Feedback -->
         @if (expert.feedback) {
-          <div class="bg-white/60 border border-slate-200/50 rounded-2xl p-4 text-[13px] text-slate-600 leading-relaxed italic">
-            <div class="flex items-center gap-2 mb-2 text-slate-400">
-              <span class="material-symbols-rounded text-[16px]">chat_bubble</span>
-              <span class="text-[10px] font-black uppercase tracking-widest">Hakem Notu</span>
-            </div>
-            "{{ expert.feedback }}"
+          <div class="mt-3 pt-3 border-t border-slate-100">
+            <p class="text-[11px] text-slate-400 italic leading-relaxed">"{{ expert.feedback }}"</p>
+          </div>
+        } @else if (expert.status === 0) {
+          <div class="mt-3 pt-3 border-t border-slate-100">
+            <p class="text-[11px] text-slate-300">Değerlendirme bekleniyor...</p>
           </div>
         }
+
       </div>
     }
   </div>
 
-  <!-- ── FOOTER ── -->
-  <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end shrink-0 bg-white rounded-b-[inherit]">
+  <!-- Footer -->
+  <div class="flex items-center justify-end px-6 py-4 border-t border-slate-100">
     <button (click)="closeDialog()"
-      class="px-6 py-2.5 rounded-full bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition-all">
+      class="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[13px] font-medium transition-all">
       Kapat
     </button>
   </div>
+
 </div>

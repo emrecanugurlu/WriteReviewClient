@@ -28,6 +28,7 @@ export default class SetExpertsDialog {
   selectedExpertIds = signal<string[]>([]);
   readonly data = inject(MAT_DIALOG_DATA);
   readonly articleId = model(this.data.articleId as string);
+  readonly currentExperts = signal<string[]>(this.data.experts || []);
 
   searchQuery = signal('');
   resetPagination() {
@@ -85,6 +86,9 @@ get uniqueSpecialties(): string[] {
 
   constructor() {
     this.loading.set(true);
+    // Initialize selected IDs with current experts
+    this.selectedExpertIds.set([...this.currentExperts()]);
+
     this.expertService.getAllExperts().subscribe({
       next: (result) => {
         this.loading.set(false);
@@ -155,6 +159,7 @@ get uniqueSpecialties(): string[] {
       if (ids.includes(id)) {
         return ids.filter(i => i !== id);
       } else {
+        if (ids.length >= 3) return ids;
         return [...ids, id];
       }
     });
@@ -171,6 +176,10 @@ get uniqueSpecialties(): string[] {
     if (this.currentPage() > 1) {
       this.currentPage.update(p => p - 1);
     }
+  }
+
+  getSelectedExperts() {
+    return this.experts().filter(e => this.selectedExpertIds().includes(e.id));
   }
 
   /** Sağ paneldeki boş slot sayısını döner (max 3 uzman) */

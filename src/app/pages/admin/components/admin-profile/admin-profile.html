@@ -1,0 +1,214 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900">
+
+  <!-- Logout Dialog -->
+  @if (showLogoutDialog()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/30" (click)="cancelLogout()"></div>
+      <div class="relative bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-lg p-7 w-full max-w-sm flex flex-col items-center text-center gap-5 z-10">
+        <div class="w-11 h-11 rounded-full bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800/50 flex items-center justify-center">
+          <span class="material-symbols-rounded text-red-500 text-[22px]">logout</span>
+        </div>
+        <div>
+          <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-1">Çıkış Yap</h2>
+          <p class="text-[13px] text-slate-400 dark:text-slate-500 leading-relaxed">Oturumunuzu kapatmak istediğinizden emin misiniz?</p>
+        </div>
+        <div class="flex gap-2 w-full">
+          <button (click)="cancelLogout()"
+            class="flex-1 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-[13px] font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+            Vazgeç
+          </button>
+          <button (click)="logout()"
+            class="flex-1 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-[13px] font-medium transition-all">
+            Çıkış Yap
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-40">
+    <div class="px-8 h-14 flex items-center justify-between max-w-6xl mx-auto">
+      <div class="flex items-center gap-3">
+        <a routerLink="/admin/dashboard"
+           class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+          <span class="material-symbols-rounded text-[20px]">arrow_back</span>
+        </a>
+        <div class="w-px h-4 bg-slate-200 dark:bg-slate-600"></div>
+        <span class="text-[13px] font-medium text-slate-500 dark:text-slate-400">Profilim</span>
+      </div>
+      <button (click)="confirmLogout()"
+        class="flex items-center gap-1.5 text-[13px] font-medium text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-all">
+        <span class="material-symbols-rounded text-[16px]">logout</span>
+        Çıkış Yap
+      </button>
+    </div>
+  </header>
+
+  <div class="px-8 pt-8 pb-20 max-w-6xl mx-auto">
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-20">
+        <span class="material-symbols-rounded animate-spin text-slate-400 text-3xl">progress_activity</span>
+      </div>
+    } @else if (error()) {
+      <div class="bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800/50 rounded-xl p-4 text-[13px] text-red-600 dark:text-red-400">
+        {{ error() }}
+      </div>
+    } @else if (!isEditing()) {
+
+      <!-- Profil Kartı -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-7 mb-5">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-5">
+            <div class="w-16 h-16 rounded-xl bg-slate-900 flex items-center justify-center text-white text-xl font-bold shrink-0">
+              {{ user().name.charAt(0) }}
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-slate-900 dark:text-slate-50" style="font-family:'Outfit',sans-serif;">{{ user().name }}</h1>
+              <p class="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">{{ user().email }}</p>
+              <span class="inline-block mt-2 text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-900 text-white">
+                {{ user().role }}
+              </span>
+            </div>
+          </div>
+          <button (click)="toggleEdit()"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-[13px] font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shrink-0">
+            <span class="material-symbols-rounded text-[16px]">edit</span>
+            Düzenle
+          </button>
+        </div>
+      </div>
+
+      <!-- İstatistikler -->
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 px-5 py-4">
+          <p class="text-xs font-medium text-slate-400 dark:text-slate-500 mb-1.5">Katılım Yılı</p>
+          <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ user().joinYear }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 px-5 py-4">
+          <p class="text-xs font-medium text-slate-400 dark:text-slate-500 mb-1.5">Rol</p>
+          <p class="text-2xl font-bold text-slate-900 dark:text-slate-50">{{ user().role }}</p>
+        </div>
+      </div>
+
+      <!-- Alt Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        <!-- Kişisel Bilgiler -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-6">
+          <h2 class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">Kişisel Bilgiler</h2>
+          <div class="flex flex-col divide-y divide-slate-50 dark:divide-slate-700">
+            <div class="flex items-center justify-between py-3">
+              <span class="text-[12px] text-slate-400 dark:text-slate-500">Tam Ad</span>
+              <span class="text-[13px] font-semibold text-slate-700 dark:text-slate-200">{{ user().name }}</span>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <span class="text-[12px] text-slate-400 dark:text-slate-500">E-posta</span>
+              <span class="text-[13px] font-semibold text-slate-700 dark:text-slate-200">{{ user().email }}</span>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <span class="text-[12px] text-slate-400 dark:text-slate-500">Rol</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-900 text-white">{{ user().role }}</span>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <span class="text-[12px] text-slate-400 dark:text-slate-500">Üyelik</span>
+              <span class="text-[13px] font-semibold text-slate-700 dark:text-slate-200">{{ user().joinYear }} yılından beri</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hızlı Erişim -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-6">
+          <h2 class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">Hızlı Erişim</h2>
+          <div class="flex flex-col gap-1.5">
+            <a routerLink="/admin/dashboard"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group">
+              <span class="material-symbols-rounded text-[18px] text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200">dashboard</span>
+              <span class="text-[13px] font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-800 dark:group-hover:text-slate-100 flex-1">Admin Panel</span>
+              <span class="material-symbols-rounded text-[16px] text-slate-300 dark:text-slate-600 group-hover:text-slate-500">chevron_right</span>
+            </a>
+            <a routerLink="/admin/users"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group">
+              <span class="material-symbols-rounded text-[18px] text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200">group</span>
+              <span class="text-[13px] font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-800 dark:group-hover:text-slate-100 flex-1">Kullanıcılar</span>
+              <span class="material-symbols-rounded text-[16px] text-slate-300 dark:text-slate-600 group-hover:text-slate-500">chevron_right</span>
+            </a>
+            <button (click)="toggleEdit()"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group text-left w-full">
+              <span class="material-symbols-rounded text-[18px] text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200">manage_accounts</span>
+              <span class="text-[13px] font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-800 dark:group-hover:text-slate-100 flex-1">Profili Düzenle</span>
+              <span class="material-symbols-rounded text-[16px] text-slate-300 dark:text-slate-600 group-hover:text-slate-500">chevron_right</span>
+            </button>
+            <button (click)="confirmLogout()"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50 transition-colors group text-left w-full">
+              <span class="material-symbols-rounded text-[18px] text-slate-400 dark:text-slate-500 group-hover:text-red-500">logout</span>
+              <span class="text-[13px] font-medium text-slate-600 dark:text-slate-300 group-hover:text-red-600 flex-1">Çıkış Yap</span>
+              <span class="material-symbols-rounded text-[16px] text-slate-300 dark:text-slate-600 group-hover:text-red-400">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    } @else {
+
+      <!-- Düzenleme Formu -->
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+        <div class="flex items-center justify-between px-7 py-5 border-b border-slate-100 dark:border-slate-700">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shrink-0">
+              <span class="material-symbols-rounded text-white text-[17px]">manage_accounts</span>
+            </div>
+            <div>
+              <p class="text-[13px] font-semibold text-slate-800 dark:text-slate-100">Profili Düzenle</p>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500">Ad Soyad bilginizi güncelleyin</p>
+            </div>
+          </div>
+          <button type="button" (click)="toggleEdit()"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+            <span class="material-symbols-rounded text-[20px]">close</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-4 px-7 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-800/20">
+          <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white text-base font-bold shrink-0">
+            {{ (profileForm.get('name')?.value || user().name).charAt(0) }}
+          </div>
+          <div>
+            <p class="text-[13px] font-semibold text-slate-700 dark:text-slate-200">{{ profileForm.get('name')?.value || user().name }}</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Avatar isme göre otomatik oluşturuluyor</p>
+          </div>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="px-7 py-6 flex flex-col gap-5">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">
+              İsim Soyisim <span class="text-red-400">*</span>
+            </label>
+            <input type="text" formControlName="name"
+              class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 dark:text-slate-100 text-slate-800 placeholder-slate-400 dark:placeholder-slate-500 text-[13px] focus:border-slate-400 focus:bg-white dark:focus:bg-slate-600 outline-none transition-all"
+              placeholder="Tam adınızı girin">
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-700">
+            <button type="button" (click)="toggleEdit()"
+              class="px-4 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 text-[13px] font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+              İptal
+            </button>
+            <button type="submit" [disabled]="profileForm.invalid || saving()"
+              class="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+              @if (saving()) {
+                <span class="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+                Kaydediliyor...
+              } @else {
+                <span class="material-symbols-rounded text-[16px]">check</span>
+                Kaydet
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+
+    }
+  </div>
+</div>

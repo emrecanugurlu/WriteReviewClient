@@ -24,6 +24,7 @@ export class ManagerPanel implements OnInit {
   // Arama & filtre
   searchQuery = signal('');
   activeStatusFilter = signal<number | null>(null); // null = Tümü
+  sortOption = signal<'newest' | 'oldest'>('newest');
 
   ngOnInit(): void {
     this.loading.set(true);
@@ -60,6 +61,14 @@ export class ManagerPanel implements OnInit {
     if (status !== null) {
       items = items.filter(a => a.status === status);
     }
+    
+    // Sıralama
+    items = [...items].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return this.sortOption() === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
     return items;
   });
 

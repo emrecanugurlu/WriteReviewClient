@@ -1,45 +1,70 @@
-<mat-toolbar color="primary" class="toolbar">
-  <div class="toolbar-content">
-    <span style="padding-right: 40px; font-size: 24px; font-weight: bold; color: #555555">Makale Tetkik</span>
+<header class="header">
+  <div class="header-container">
+    <!-- Logo/Brand -->
+    <div class="brand" routerLink="/">
+      <div class="logo-icon">
+        <span class="material-symbols-rounded">edit_document</span>
+      </div>
+      <span class="brand-text">Makale Tetkik</span>
+    </div>
 
-    @if (authService.isLoggedIn() && authService.getUserRole() != "Admin") {
-      <a [routerLink]="['/my-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Yazılarım</button>
-      </a>
-    }
+    <!-- Navigation -->
+    <nav class="nav-links">
+      @if (authService.isLoggedIn() && authService.getUserRole() != "Admin") {
+        <a [routerLink]="['/my-articles']" routerLinkActive="active-link" class="nav-item">
+          <span class="material-symbols-rounded icon">description</span>
+          Yazılarım
+        </a>
+      }
 
-    @if (authService.getUserRole() == "Manager") {
-      <a [routerLink]="['/staff/inbox']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Gönderilen yazılar</button>
-      </a>
-    }
+      @if (authService.getUserRole() == "Manager") {
+        <a [routerLink]="['/staff/inbox']" routerLinkActive="active-link" class="nav-item">
+          <span class="material-symbols-rounded icon">inbox</span>
+          Gönderilen Yazılar
+        </a>
+      }
 
-    @if (authService.getUserRole() == "Admin") {
-      <a [routerLink]="['/admin']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">Admin Panel</button>
-      </a>
-    }
+      @if (authService.getUserRole() == "Admin") {
+        <a [routerLink]="['/admin']" routerLinkActive="active-link" class="nav-item">
+          <span class="material-symbols-rounded icon">admin_panel_settings</span>
+          Admin Panel
+        </a>
+      }
 
-    @if (authService.isLoggedIn() && authService.getUserRole() == "Expert") {
-      <a [routerLink]="['/assigned-articles']" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn">İncelenecek Yazılar</button>
-      </a>
-    }
+      @if (authService.isLoggedIn() && authService.getUserRole() == "Expert") {
+        <a [routerLink]="['/assigned-articles']" routerLinkActive="active-link" class="nav-item">
+          <span class="material-symbols-rounded icon">fact_check</span>
+          İncelenecek Yazılar
+        </a>
+      }
+    </nav>
 
-    <span class="spacer"></span>
-    @if (authService.isLoggedIn()) {
-      <a routerLink="/profile" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn" matButton>Profil
-          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="account_circle"></mat-icon>
-        </button>
-      </a>
-    } @else {
-      <a routerLink="/login" routerLinkActive="active-link" #rla="routerLinkActive">
-        <button [ngClass]="{'active-button': rla.isActive}" class="nav-btn" matButton>Giriş Yap
-          <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="login"></mat-icon>
-        </button>
-      </a>
-    }
+    <div class="spacer"></div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="theme-toggle" (click)="themeService.toggle()"
+              [title]="themeService.isDark() ? 'Açık Temaya Geç' : 'Koyu Temaya Geç'">
+        <span class="material-symbols-rounded">{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/profile" class="profile-link" [title]="'Profil: ' + authService.getUserRole()">
+          <div class="profile-info">
+            <span class="profile-name">Profil</span>
+            <span class="profile-role">{{ authService.getUserRole() }}</span>
+          </div>
+          <div class="avatar">
+            <span class="material-symbols-rounded">account_circle</span>
+          </div>
+        </a>
+      } @else {
+        <a routerLink="/login" class="login-btn">
+          <span>Giriş Yap</span>
+          <span class="material-symbols-rounded">login</span>
+        </a>
+      }
+    </div>
   </div>
-</mat-toolbar>
+</header>
 

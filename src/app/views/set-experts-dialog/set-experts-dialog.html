@@ -1,274 +1,309 @@
-<!-- Loading -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  HAKEM SEÇİMİ DIALOG — Premium Redesign                -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<!-- ── LOADING STATE ── -->
 @if (loading()) {
-  <div class="w-full flex flex-col items-center justify-center h-80 gap-5">
-    <div class="relative w-16 h-16">
-      <div class="w-16 h-16 rounded-full border-4 border-slate-100"></div>
-      <div class="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-emerald-500 animate-spin"></div>
+  <div class="experts-dialog-shell flex items-center justify-center">
+    <div class="flex flex-col items-center gap-5">
+      <div class="relative w-12 h-12">
+        <div class="absolute inset-0 rounded-full border-2 border-slate-100"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-t-slate-800 animate-spin"></div>
+      </div>
+      <div class="text-center">
+        <p class="text-[13px] font-semibold text-slate-700">Hakemler yükleniyor</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Lütfen bekleyin...</p>
+      </div>
     </div>
-    <p class="text-sm font-semibold text-slate-500">Uzmanlar yükleniyor...</p>
   </div>
 }
 
-<!-- Hata -->
+<!-- ── ERROR STATE ── -->
 @if (error() !== '') {
-  <div class="p-8 flex flex-col items-center gap-4 text-center">
-    <div class="w-14 h-14 bg-red-50 rounded-[1.25rem] flex items-center justify-center">
-      <span class="material-symbols-rounded text-red-500 text-3xl">error</span>
+  <div class="experts-dialog-shell flex flex-col items-center justify-center gap-4 p-10 text-center">
+    <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+      <span class="material-symbols-rounded text-red-500 text-3xl">error_outline</span>
     </div>
     <div>
-      <p class="font-bold text-slate-700">Bir sorun oluştu</p>
-      <p class="text-sm text-slate-400 mt-1">{{ error() }}</p>
-    </div>
-  </div>
-}
-
-<!-- Ana İçerik -->
-@if (ok()) {
-
-<!-- Başarı Overlay -->
-@if (showSuccessToast()) {
-  <div class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm rounded-[inherit]">
-    <div class="flex flex-col items-center gap-4 text-center px-8">
-      <div class="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center animate-[bounceIn_0.5s_ease-out]">
-        <span class="material-symbols-rounded text-emerald-500 text-5xl">check_circle</span>
-      </div>
-      <div>
-        <h3 class="text-xl font-bold text-slate-800" style="font-family:'Outfit',sans-serif;">Uzmanlar Atandı!</h3>
-        <p class="text-slate-500 text-sm mt-1">{{ selectedCountForToast }} uzman başarıyla makaleye atandı.</p>
-      </div>
-      <button (click)="closeDialog()"
-        class="mt-2 px-6 py-2.5 rounded-full bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/25">
-        Tamam
-      </button>
-    </div>
-  </div>
-}
-
-<!-- Dialog Shell -->
-<div class="flex flex-col h-full font-sans text-slate-800 select-none" style="min-height: 560px; max-height: 680px;">
-
-  <!-- ── HEADER ── -->
-  <div class="flex items-center justify-between px-6 pt-6 pb-5 shrink-0">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
-        <span class="material-symbols-rounded text-white text-[22px]">group_add</span>
-      </div>
-      <div>
-        <h2 class="font-bold text-slate-800 text-lg leading-tight" style="font-family:'Outfit',sans-serif;">Hakem / Uzman Ata</h2>
-        <p class="text-xs text-slate-400">Makale için en fazla <strong class="text-slate-600">3 uzman</strong> seçin</p>
-      </div>
+      <p class="text-[15px] font-bold text-slate-800">Bağlantı Hatası</p>
+      <p class="text-[12px] text-slate-400 mt-1 max-w-[240px]">{{ error() }}</p>
     </div>
     <button (click)="closeDialog()"
-      class="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
-      <span class="material-symbols-rounded text-[20px]">close</span>
+      class="px-6 py-2 bg-slate-900 hover:bg-slate-700 text-white text-[12px] font-semibold rounded-lg transition-all active:scale-95">
+      Kapat
     </button>
   </div>
+}
 
-  <!-- Seçim Sayacı (Progress Bar) -->
-  <div class="px-6 pb-4 shrink-0">
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-xs font-semibold text-slate-500">Seçim İlerlemesi</span>
-      <span class="text-xs font-bold" [ngClass]="selectedExpertIds().length >= 3 ? 'text-emerald-600' : 'text-slate-500'">
-        {{ selectedExpertIds().length }} / 3 Uzman
-      </span>
-    </div>
-    <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-      <div class="h-full rounded-full transition-all duration-500"
-        [style.width.%]="(selectedExpertIds().length / 3) * 100"
-        [ngClass]="{
-          'bg-slate-300': selectedExpertIds().length === 0,
-          'bg-amber-400': selectedExpertIds().length === 1,
-          'bg-blue-500': selectedExpertIds().length === 2,
-          'bg-emerald-500': selectedExpertIds().length === 3
-        }"></div>
-    </div>
-  </div>
+<!-- ── MAIN CONTENT ── -->
+@if (ok()) {
 
-  <!-- ── İKİ PANEL LAYOUT ── -->
-  <div class="flex flex-col lg:flex-row flex-1 min-h-0 border-t border-slate-100">
+  <!-- SUCCESS OVERLAY -->
+  @if (showSuccessToast()) {
+    <div class="experts-dialog-shell flex flex-col items-center justify-center">
+      <div class="flex flex-col items-center gap-4 text-center px-10">
 
-    <!-- SOL PANEL: Uzman Listesi -->
-    <div class="flex flex-col lg:w-[58%] border-b lg:border-b-0 lg:border-r border-slate-100 min-h-0">
-
-      <!-- Arama + Filtre -->
-      <div class="px-4 py-3 border-b border-slate-50 bg-slate-50/50 shrink-0 flex gap-2">
-        <div class="relative flex-1">
-          <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px] pointer-events-none">search</span>
-          <input type="text"
-            [ngModel]="searchQuery()"
-            (ngModelChange)="searchQuery.set($event); resetPagination()"
-            placeholder="İsim veya uzmanlık ara..."
-            class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all">
+        <div class="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center">
+          <span class="material-symbols-rounded text-white text-[20px]">check</span>
         </div>
-        <select
-          [ngModel]="selectedSpecialty()"
-          (ngModelChange)="setSpecialtyFilter($event)"
-          class="pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-600 focus:outline-none focus:border-emerald-400 appearance-none cursor-pointer transition-all w-36">
-          <option [ngValue]="null">Tüm Alan</option>
-          @for (specialty of uniqueSpecialties; track specialty) {
-            <option [value]="specialty">{{ specialty }}</option>
-          }
-        </select>
-      </div>
 
-      <!-- Uzman Kartları -->
-      <div class="overflow-y-auto flex-1 p-3 space-y-2">
+        <div>
+          <p class="text-[14px] font-bold text-slate-900 mb-1">Atama Tamamlandı</p>
+          <p class="text-[13px] text-slate-400 leading-relaxed">
+            <span class="font-semibold text-slate-700">{{ selectedCountForToast }} hakem</span> makaleye başarıyla atandı.
+          </p>
+        </div>
 
-        @if (filteredExperts().length === 0) {
-          <div class="flex flex-col items-center justify-center h-40 text-center gap-2">
-            <span class="material-symbols-rounded text-slate-300 text-4xl">person_search</span>
-            <p class="text-slate-400 text-sm">Uygun uzman bulunamadı</p>
-            <button (click)="resetFilters()" class="text-emerald-600 text-xs font-semibold hover:underline">Filtreleri Temizle</button>
-          </div>
-        }
-
-        @for (expert of paginatedExperts(); track expert.id) {
-          <div (click)="selectedExpertIds().length < 3 || isSelected(expert.id) ? toggleExpert(expert.id) : null"
-            class="flex items-center gap-3 p-3 rounded-2xl border transition-all"
-            [ngClass]="{
-              'border-emerald-300 bg-emerald-50 shadow-sm': isSelected(expert.id),
-              'border-slate-100 bg-white hover:border-emerald-200 hover:shadow-sm cursor-pointer': !isSelected(expert.id) && selectedExpertIds().length < 3,
-              'border-slate-100 bg-slate-50/50 opacity-50 cursor-not-allowed': !isSelected(expert.id) && selectedExpertIds().length >= 3
-            }">
-
-            <!-- Avatar -->
-            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center text-sm font-bold transition-all"
-              [ngClass]="isSelected(expert.id) ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'">
+        <!-- Selected experts preview -->
+        <div class="flex -space-x-2">
+          @for (expert of getSelectedExperts(); track expert.id) {
+            <div class="w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-[11px] font-bold"
+              [title]="expert.name">
               {{ expert.name.charAt(0).toUpperCase() }}
             </div>
+          }
+        </div>
 
-            <!-- Bilgi -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <p class="text-sm font-semibold truncate transition-colors"
-                  [ngClass]="isSelected(expert.id) ? 'text-emerald-800' : 'text-slate-800'">
-                  {{ expert.name }}
-                </p>
+        <button (click)="closeDialog()"
+          class="mt-2 px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all">
+          Panele Dön
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── DIALOG BODY ── -->
+  @if (!showSuccessToast()) {
+    <div class="experts-dialog-shell flex">
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- LEFT PANEL — Expert Browser           -->
+      <!-- ══════════════════════════════════════ -->
+      <div class="flex-1 flex flex-col min-h-0 bg-white">
+
+        <!-- Header -->
+        <div class="px-7 pt-6 pb-5 border-b border-slate-100">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shadow-sm">
+              <span class="material-symbols-rounded text-white text-[18px]">manage_accounts</span>
+            </div>
+            <div>
+              <h2 class="text-[15px] font-bold text-slate-900 leading-none">Hakem Seçimi</h2>
+              <p class="text-[11px] text-slate-400 mt-0.5">Makaleye uygun hakemleri seçin</p>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <div class="relative mb-3">
+            <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[17px] pointer-events-none">search</span>
+            <input
+              type="text"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event); resetPagination()"
+              placeholder="İsim veya uzmanlık alanı ara..."
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[13px] text-slate-700 placeholder-slate-400 outline-none focus:border-slate-400 focus:bg-white transition-all">
+          </div>
+
+          <!-- Specialty Filters -->
+          <div class="flex items-center gap-1.5 overflow-x-auto" style="scrollbar-width:none;">
+            <button
+              (click)="setSpecialtyFilter(null)"
+              class="filter-chip shrink-0"
+              [class.filter-chip--active]="selectedSpecialty() === null">
+              Tümü
+            </button>
+            @for (specialty of uniqueSpecialties; track specialty) {
+              <button
+                (click)="setSpecialtyFilter(specialty)"
+                class="filter-chip shrink-0"
+                [class.filter-chip--active]="selectedSpecialty() === specialty">
+                {{ specialty }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Expert List -->
+        <div class="flex-1 overflow-y-auto expert-scroll">
+
+          @if (filteredExperts().length === 0) {
+            <div class="flex flex-col items-center justify-center h-full gap-3 py-16">
+              <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center">
+                <span class="material-symbols-rounded text-slate-300 text-2xl">search_off</span>
               </div>
-              <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full"
-                  [ngClass]="isSelected(expert.id) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
-                  {{ expert.expertiseAreas }}
-                </span>
-                <!-- İş yükü göstergesi -->
-                <div class="flex items-center gap-1">
-                  @for (i of [1,2,3]; track i) {
-                    <div class="w-2 h-2 rounded-full"
-                      [ngClass]="i <= expert.activeTasks ? (expert.activeTasks >= 3 ? 'bg-red-400' : 'bg-amber-400') : 'bg-slate-200'"></div>
-                  }
-                </div>
-                <span class="text-[10px] text-slate-400">{{ expert.activeTasks }} görev</span>
+              <div class="text-center">
+                <p class="text-[13px] font-semibold text-slate-500">Sonuç bulunamadı</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">Farklı bir arama terimi deneyin</p>
               </div>
             </div>
+          }
 
-            <!-- Seçim ikonu -->
-            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all"
-              [ngClass]="isSelected(expert.id) ? 'border-emerald-600 bg-emerald-600' : 'border-slate-200'">
-              @if (isSelected(expert.id)) {
-                <span class="material-symbols-rounded text-white text-[13px]">check</span>
+          @for (expert of paginatedExperts(); track expert.id) {
+            <div
+              (click)="selectedExpertIds().length < 3 || isSelected(expert.id) ? toggleExpert(expert.id) : null"
+              class="expert-row"
+              [class.expert-row--selected]="isSelected(expert.id)"
+              [class.expert-row--disabled]="!isSelected(expert.id) && selectedExpertIds().length >= 3">
+
+              <!-- Avatar -->
+              <div class="expert-avatar"
+                [class.expert-avatar--selected]="isSelected(expert.id)">
+                {{ expert.name.charAt(0).toUpperCase() }}
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-semibold text-slate-800 truncate leading-tight">{{ expert.name }}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[11px] text-slate-400 truncate">{{ expert.expertiseAreas[0] }}</span>
+                  <span class="text-slate-200">·</span>
+                  <!-- Workload indicator -->
+                  <div class="flex gap-0.5 items-center shrink-0">
+                    @for (i of [1,2,3]; track i) {
+                      <div class="w-2 h-1.5 rounded-full transition-all"
+                        [ngClass]="i <= expert.activeTasks
+                          ? (expert.activeTasks >= 3 ? 'bg-red-400' : expert.activeTasks >= 2 ? 'bg-amber-400' : 'bg-emerald-400')
+                          : 'bg-slate-200'">
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <!-- Checkbox -->
+              <div class="expert-check"
+                [class.expert-check--on]="isSelected(expert.id)">
+                @if (isSelected(expert.id)) {
+                  <span class="material-symbols-rounded text-white" style="font-size:12px; font-variation-settings:'wght' 700;">check</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-7 py-3.5 border-t border-slate-100 flex items-center justify-between bg-white shrink-0">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+            {{ filteredExperts().length }} Hakem
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button (click)="prevPage()" [disabled]="currentPage() === 1"
+              class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-50 hover:text-slate-700 disabled:opacity-25 disabled:cursor-not-allowed transition-all">
+              <span class="material-symbols-rounded text-[15px]">chevron_left</span>
+            </button>
+            <span class="text-[11px] font-bold text-slate-600 min-w-[36px] text-center tabular-nums">
+              {{ currentPage() }} / {{ totalPages() }}
+            </span>
+            <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+              class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 border border-slate-100 hover:bg-slate-50 hover:text-slate-700 disabled:opacity-25 disabled:cursor-not-allowed transition-all">
+              <span class="material-symbols-rounded text-[15px]">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- RIGHT PANEL — Assignment Summary      -->
+      <!-- ══════════════════════════════════════ -->
+      <div class="right-panel flex flex-col h-full">
+
+        <!-- Panel Top Bar -->
+        <div class="flex items-center justify-between px-5 pt-5 pb-4 shrink-0">
+          <div>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Atama Listesi</p>
+          </div>
+          <button (click)="closeDialog()"
+            class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-all">
+            <span class="material-symbols-rounded text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Selection Progress -->
+        <div class="mx-4 mb-4 shrink-0">
+          <div class="bg-white rounded-xl p-3 border border-slate-200/60 shadow-sm">
+            <!-- Step dots -->
+            <div class="flex items-center gap-1.5 mb-2">
+              @for (slot of [1,2,3]; track slot) {
+                <div class="h-1.5 flex-1 rounded-full transition-all duration-300"
+                  [ngClass]="slot <= selectedExpertIds().length ? 'bg-slate-900' : 'bg-slate-200'">
+                </div>
+              }
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="text-[11px] font-semibold text-slate-600">
+                <span class="text-slate-900 font-bold text-[13px]">{{ selectedExpertIds().length }}</span>
+                <span class="text-slate-400">/3</span> hakem seçildi
+              </p>
+              @if (selectedExpertIds().length === 3) {
+                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Tamamlandı</span>
+              } @else {
+                <span class="text-[10px] text-slate-400">{{ 3 - selectedExpertIds().length }} boş slot</span>
               }
             </div>
           </div>
-        }
-      </div>
-
-      <!-- Pagination -->
-      @if (totalPages() > 1) {
-        <div class="px-4 py-2.5 border-t border-slate-50 flex items-center justify-between shrink-0 bg-white">
-          <button (click)="prevPage()" [disabled]="currentPage() === 1"
-            class="w-7 h-7 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 hover:border-emerald-300 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-            <span class="material-symbols-rounded text-[16px]">chevron_left</span>
-          </button>
-          <span class="text-xs text-slate-400 font-medium">{{ currentPage() }} / {{ totalPages() }}</span>
-          <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-            class="w-7 h-7 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 hover:border-emerald-300 hover:text-emerald-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-            <span class="material-symbols-rounded text-[16px]">chevron_right</span>
-          </button>
         </div>
-      }
-    </div>
 
-    <!-- SAĞ PANEL: Seçilenler -->
-    <div class="lg:w-[42%] flex flex-col min-h-0">
-      <div class="px-4 py-3 border-b border-slate-50 bg-slate-50/30 shrink-0">
-        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Seçilen Uzmanlar</p>
-      </div>
+        <!-- Slot Cards -->
+        <div class="flex-1 px-4 flex flex-col gap-2.5 overflow-y-auto" style="scrollbar-width:none;">
 
-      <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2.5">
-        @if (selectedExpertIds().length === 0) {
-          <div class="h-full flex flex-col items-center justify-center text-center gap-3 py-8">
-            <div class="w-14 h-14 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center">
-              <span class="material-symbols-rounded text-slate-300 text-[28px]">group</span>
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-slate-400">Henüz uzman seçilmedi</p>
-              <p class="text-xs text-slate-300 mt-0.5">Soldaki listeden uzman seçin</p>
-            </div>
-          </div>
-        }
-
-        @for (id of selectedExpertIds(); track id) {
-          <!-- Seçilen uzman kartı -->
-          @for (expert of experts(); track expert.id) {
-            @if (expert.id === id) {
-              <div class="flex items-center gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-sm">
-                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+          <!-- Filled Slots -->
+          @for (expert of getSelectedExperts(); track expert.id; let idx = $index) {
+            <div class="assignment-card">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white text-[11px] font-bold shrink-0 shadow-sm">
                   {{ expert.name.charAt(0).toUpperCase() }}
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-slate-800 truncate">{{ expert.name }}</p>
-                  <p class="text-[11px] text-slate-400">{{ expert.expertiseAreas }}</p>
+                  <p class="text-[12px] font-bold text-slate-800 truncate leading-tight">{{ expert.name }}</p>
+                  <p class="text-[10px] text-slate-400 truncate mt-0.5">{{ expert.expertiseAreas[0] }}</p>
                 </div>
-                <button (click)="toggleExpert(expert.id)"
-                  class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all">
-                  <span class="material-symbols-rounded text-[16px]">close</span>
-                </button>
               </div>
-            }
-          }
-        }
-
-        <!-- Boş slotlar -->
-        @for (i of getEmptySlots(); track i) {
-          <div class="flex items-center gap-3 p-3 rounded-2xl border-2 border-dashed border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-              <span class="material-symbols-rounded text-slate-300 text-[18px]">person_add</span>
+              <button (click)="toggleExpert(expert.id)"
+                class="mt-2.5 w-full flex items-center justify-center gap-1 py-1.5 rounded-lg border border-slate-200 text-[10px] font-semibold text-slate-400 hover:border-red-200 hover:text-red-500 hover:bg-red-50 transition-all">
+                <span class="material-symbols-rounded text-[13px]">remove_circle_outline</span>
+                Kaldır
+              </button>
             </div>
-            <p class="text-xs text-slate-300 font-medium">Uzman {{ selectedExpertIds().length + i }}. slot</p>
-          </div>
-        }
-      </div>
+          }
 
-      <!-- Özet Bilgi -->
-      @if (selectedExpertIds().length > 0) {
-        <div class="px-4 py-3 border-t border-slate-50 bg-slate-50/30 shrink-0">
-          <div class="flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <p class="text-xs text-slate-500">
-              <span class="font-bold text-slate-700">{{ selectedExpertIds().length }}</span> uzman atanmaya hazır
-            </p>
-          </div>
+          <!-- Empty Slots -->
+          @for (i of getEmptySlots(); track i) {
+            <div class="empty-slot">
+              <div class="w-8 h-8 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center">
+                <span class="material-symbols-rounded text-slate-300 text-[16px]">add</span>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold text-slate-400">Boş Slot {{ getSelectedExperts().length + i }}</p>
+                <p class="text-[10px] text-slate-300 mt-0.5">Soldan hakem seçin</p>
+              </div>
+            </div>
+          }
+
         </div>
-      }
-    </div>
-  </div>
 
-  <!-- ── FOOTER ── -->
-  <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between shrink-0 bg-white rounded-b-[inherit]">
-    <button (click)="closeDialog()"
-      class="px-4 py-2.5 rounded-full text-sm font-medium text-slate-500 hover:bg-slate-100 transition-all">
-      İptal
-    </button>
-    <button
-      [disabled]="selectedExpertIds().length !== 3"
-      (click)="assignExperts({ expertIds: selectedExpertIds(), articleId: articleId() })"
-      class="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all"
-      [ngClass]="selectedExpertIds().length === 3
-        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 hover:-translate-y-0.5'
-        : 'bg-slate-100 text-slate-400 cursor-not-allowed'">
-      <span class="material-symbols-rounded text-[18px]">how_to_reg</span>
-      {{ selectedExpertIds().length === 3 ? '3 Uzmanı Ata' : (3 - selectedExpertIds().length) + ' Uzman Daha Seçin' }}
-    </button>
-  </div>
-</div>
+        <!-- Divider -->
+        <div class="h-px bg-slate-100 mx-0 mt-3 shrink-0"></div>
+
+        <!-- Action Button -->
+        <div class="p-4 shrink-0">
+          <button
+            (click)="assignExperts({ expertIds: selectedExpertIds(), articleId: articleId() })"
+            [disabled]="selectedExpertIds().length === 0"
+            class="assign-btn w-full"
+            [class.assign-btn--active]="selectedExpertIds().length > 0"
+            [class.assign-btn--disabled]="selectedExpertIds().length === 0">
+            <span class="material-symbols-rounded text-[16px]">
+              {{ selectedExpertIds().length > 0 ? 'how_to_reg' : 'person_search' }}
+            </span>
+            {{ selectedExpertIds().length > 0 ? 'Hakemleri Ata' : 'Hakem Seçin' }}
+          </button>
+          <p class="text-center text-[10px] text-slate-300 mt-2">
+            En az 1, en fazla 3 hakem seçebilirsiniz
+          </p>
+        </div>
+
+      </div>
+    </div>
+  }
 }

@@ -82,5 +82,9 @@ export class ArticleService {
     // return this.http.get<ArticleReview[]>(`/api/articles/${articleId}/reviews`);
   }
 
+  deleteArticle(id: string): Observable<void> {
+    return this.http.delete<void>(`/api/articles/${id}`);
+  }
+
 
 }

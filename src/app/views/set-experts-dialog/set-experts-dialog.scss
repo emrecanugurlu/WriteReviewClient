@@ -1,11 +1,233 @@
- /* Scrollbar özelleştirmesi */
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 20px;
-    }
+/* ══════════════════════════════════════════════════════════════
+   SET EXPERTS DIALOG — Premium Component Styles
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Shell (the dialog container) ── */
+.experts-dialog-shell {
+  width: 760px;
+  height: 560px;
+  background: white;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  position: relative;
+}
+
+/* ══════════════════════════════════════
+   LEFT PANEL — Expert List
+   ══════════════════════════════════════ */
+
+/* Filter chip buttons */
+.filter-chip {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #f8fafc;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #64748b;
+    border-color: #cbd5e1;
+  }
+}
+
+.filter-chip--active {
+  background: #0f172a !important;
+  color: white !important;
+  border-color: #0f172a !important;
+}
+
+/* Expert row item */
+.expert-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 28px;
+  border-bottom: 1px solid #f8fafc;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  user-select: none;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.expert-row--selected {
+  background: #f8fafc;
+  border-left: 3px solid #0f172a;
+  padding-left: 25px;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+.expert-row--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Expert avatar */
+.expert-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.expert-avatar--selected {
+  background: #0f172a;
+  color: white;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+/* Expert checkbox circle */
+.expert-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  background: white;
+}
+
+.expert-check--on {
+  background: #0f172a;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+/* Scrollable expert list */
+.expert-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 99px;
+  }
+}
+
+/* ══════════════════════════════════════
+   RIGHT PANEL
+   ══════════════════════════════════════ */
+
+.right-panel {
+  width: 224px;
+  flex-shrink: 0;
+  background: #f8fafc;
+  border-left: 1px solid #f1f5f9;
+}
+
+/* Assignment card (filled slot) */
+.assignment-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  animation: slideIn 0.2s ease;
+}
+
+/* Empty slot */
+.empty-slot {
+  border: 1.5px dashed #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+/* Assign button */
+.assign-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.assign-btn--active {
+  background: #0f172a;
+  color: white;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
+
+  &:hover {
+    background: #1e293b;
+  }
+}
+
+.assign-btn--disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+
+  &:active {
+    transform: none;
+  }
+}
+
+/* ── Animations ── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

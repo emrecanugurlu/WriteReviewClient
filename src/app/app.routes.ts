@@ -20,8 +20,11 @@ import { ExpertPanel } from './pages/expert/components/expert-panel/expert-panel
 import { AssignedArticleDetail } from './pages/expert/components/assigned-article-detail/assigned-article-detail';
 import { ArticleDetail as AuthorArticleDetail } from './pages/author/components/article-detail/article-detail';
 import { AdminDashboard } from './pages/admin/components/dashboard/dashboard';
+import { AdminProfile } from './pages/admin/components/admin-profile/admin-profile';
 import { ManagerProfile } from './pages/manager/components/manager-profile/manager-profile';
 import { ExpertProfile } from './pages/expert/components/expert-profile/expert-profile';
+import { AssignExperts } from './pages/manager/components/assign-experts/assign-experts';
+import { ViewExperts } from './pages/manager/components/view-experts/view-experts';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,6 +40,8 @@ export const routes: Routes = [
   { path: 'expert-panel', component: ExpertPanel, canActivate: [authGuard] },
   { path: 'expert-profile', component: ExpertProfile, canActivate: [authGuard] },
   { path: 'assigned-article-detail/:id', component: AssignedArticleDetail, canActivate: [authGuard] },
+  { path: 'assign-experts/:id', component: AssignExperts, canActivate: [authGuard] },
+  { path: 'view-experts/:id', component: ViewExperts, canActivate: [authGuard] },
   {
     path: 'admin', component: AdminLayout, children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -46,6 +51,7 @@ export const routes: Routes = [
       { path: 'expertise-areas', component: ExpertiseAreas },
       { path: 'roles', component: Roles },
       { path: 'users', component: Users },
+      { path: 'profile', component: AdminProfile },
     ], canActivate: [authGuard]
   },
 ];

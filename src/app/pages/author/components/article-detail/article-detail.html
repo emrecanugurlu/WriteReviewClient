@@ -1,356 +1,231 @@
 @if (loading()) {
-  <div class="min-h-screen bg-[#f4f8f7] flex items-center justify-center">
-    <div class="flex flex-col items-center gap-5">
-      <div class="relative w-16 h-16">
-        <div class="w-16 h-16 rounded-full border-[5px] border-cyan-100"></div>
-        <div class="absolute inset-0 rounded-full border-[5px] border-transparent border-t-cyan-600 animate-spin"></div>
-      </div>
-      <p class="text-base font-bold text-slate-500 tracking-wide">Makale Yükleniyor...</p>
-    </div>
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+    <span class="material-symbols-rounded animate-spin text-slate-400 dark:text-slate-500 text-3xl">progress_activity</span>
   </div>
 } @else {
-<div class="min-h-screen bg-[#f4f8f7] text-slate-800 font-sans selection:bg-cyan-200 selection:text-cyan-900 pb-20">
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900">
 
-  <!-- Floating Header (Expressive) -->
-  <div class="pt-6 px-4 sm:px-8">
-    <header class="max-w-7xl mx-auto bg-white/80 backdrop-blur-2xl rounded-full h-16 flex items-center justify-between px-3 sm:px-5 border border-white shadow-[0_8px_30px_rgba(8,145,178,0.06)] sticky top-6 z-40">
-      
-      <div class="flex items-center gap-3 pl-2 min-w-0">
-        <a routerLink="/my-articles" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all shrink-0">
-          <span class="material-symbols-rounded text-[22px]">arrow_back</span>
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-40">
+    <div class="px-8 h-14 flex items-center justify-between max-w-6xl mx-auto">
+
+      <div class="flex items-center gap-3 min-w-0">
+        <a routerLink="/my-articles"
+           class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+          <span class="material-symbols-rounded text-[20px]">arrow_back</span>
         </a>
-        <div class="h-5 w-px bg-slate-200 shrink-0"></div>
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="text-xs font-bold text-slate-400 hidden sm:block shrink-0 uppercase tracking-widest">Yazar Paneli</span>
-          <span class="material-symbols-rounded text-slate-300 text-[16px] hidden sm:block shrink-0">chevron_right</span>
-          <span class="text-sm font-bold text-slate-700 truncate" style="font-family:'Outfit',sans-serif;">
-            Makale Detayı
+        <div class="w-px h-4 bg-slate-200 dark:bg-slate-600"></div>
+        <div class="flex items-center gap-2.5">
+          <span class="text-[13px] font-medium text-slate-600 dark:text-slate-300 truncate max-w-[280px]">
+            {{ article().title || 'Başlıksız Makale' }}
           </span>
         </div>
       </div>
 
-      <div class="flex items-center gap-2.5 pr-1">
-        <!-- Durum Badge -->
-        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border" [ngClass]="{
-          'bg-slate-50 text-slate-600 border-slate-200': article().status === 0,
-          'bg-blue-50 text-blue-700 border-blue-200': article().status === 1,
-          'bg-amber-50 text-amber-700 border-amber-200': article().status === 2,
-          'bg-emerald-50 text-emerald-700 border-emerald-200': article().status === 3,
-          'bg-red-50 text-red-700 border-red-200': article().status === 4,
-          'bg-orange-50 text-orange-700 border-orange-200': article().status === 5
-        }">
-          <span class="w-1.5 h-1.5 rounded-full mr-1" [ngClass]="{
-            'bg-slate-400': article().status === 0,
-            'bg-blue-500': article().status === 1,
-            'bg-amber-500': article().status === 2,
-            'bg-emerald-500': article().status === 3,
-            'bg-red-500': article().status === 4,
-            'bg-orange-500': article().status === 5
-          }"></span>
+      <div class="flex items-center gap-2">
+        <!-- Status badge -->
+        <span class="text-[11px] font-semibold px-2.5 py-1 rounded border"
+              [ngClass]="{
+                'bg-slate-50 dark:bg-slate-900/30 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-700': article().status === 0,
+                'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800/50': article().status === 1,
+                'bg-violet-50 text-violet-700 border-violet-100': article().status === 2,
+                'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-800/50': article().status === 3,
+                'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600': article().status === 4,
+                'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-800/50': article().status === 5
+              }">
           {{ statusText(article().status) }}
         </span>
 
         @if (isEditable) {
+          <div class="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1"></div>
           <button type="button" (click)="saveDraft()" [disabled]="loading()"
-            class="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold transition-all disabled:opacity-40">
-            <span class="material-symbols-rounded text-[18px]">save</span>
-            Taslak
+            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-[13px] font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-40">
+            Taslak Kaydet
           </button>
           <button type="button" (click)="publish()" [disabled]="form.invalid || loading()"
-            class="flex items-center gap-2 px-5 py-1.5 rounded-full bg-cyan-600 text-white text-sm font-bold hover:bg-cyan-700 transition-all shadow-md shadow-cyan-600/20 disabled:opacity-40 disabled:cursor-not-allowed">
-            <span class="material-symbols-rounded text-[18px]">send</span>
+            class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-medium transition-all disabled:opacity-40">
+            <span class="material-symbols-rounded text-[15px]">send</span>
             Gönder
           </button>
         }
       </div>
-    </header>
-  </div>
+    </div>
+  </header>
 
-  <!-- Hata Mesajı -->
+  <!-- Error Banner -->
   @if (error) {
-    <div class="max-w-7xl mx-auto px-6 mt-6">
-      <div class="flex items-start gap-3 bg-red-50 border border-red-100 p-4 rounded-2xl text-sm text-red-800 shadow-sm">
-        <span class="material-symbols-rounded text-red-500 text-[20px] shrink-0 mt-0.5">error</span>
-        <p class="font-medium">{{ error }}</p>
+    <div class="max-w-6xl mx-auto px-8 mt-4">
+      <div class="flex items-center gap-2.5 bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800/50 p-3.5 rounded-lg">
+        <span class="material-symbols-rounded text-red-400 text-[18px]">error</span>
+        <p class="text-[13px] text-red-600 dark:text-red-400 font-medium">{{ error }}</p>
       </div>
     </div>
   }
 
-  <!-- 3-Sütun Layout -->
-  <form [formGroup]="form" class="max-w-7xl mx-auto px-4 sm:px-8 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Non-editable notice -->
+  @if (!isEditable) {
+    <div class="max-w-6xl mx-auto px-8 mt-4">
+      <div class="flex items-center gap-2.5 bg-slate-900 px-4 py-3 rounded-lg">
+        <span class="material-symbols-rounded text-slate-400 text-[16px]">lock</span>
+        <p class="text-[12px] text-slate-400">Bu makale düzenlemeye kapalıdır. Yalnızca görüntüleyebilirsiniz.</p>
+      </div>
+    </div>
+  }
 
-    <!-- Sol: Editör Alanı (2/3) -->
-    <section class="lg:col-span-2 flex flex-col gap-8">
+  <!-- Main Layout -->
+  <form [formGroup]="form">
+    <div class="max-w-4xl mx-auto px-8 pt-6 pb-20 flex flex-col gap-6">
 
-      <!-- Başlık + Özet Kartı -->
-      <div class="bg-white rounded-[3rem] border border-white shadow-[0_15px_50px_rgba(0,0,0,0.03)] p-8 sm:p-12 relative group">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-cyan-50 transition-colors duration-500"></div>
-
-        <div class="flex items-center gap-3 mb-8 relative z-10">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-50 flex items-center justify-center shadow-sm border border-cyan-100">
-            <span class="material-symbols-rounded text-cyan-600 text-[24px]">title</span>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-800" style="font-family: 'Outfit', sans-serif;">Başlık & Özet</h2>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Temel Bilgiler</p>
-          </div>
-        </div>
-
-        <!-- Başlık -->
-        <div class="mb-8 relative z-10">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Makale Başlığı</label>
-            <span class="text-[10px] font-bold uppercase tracking-widest" [ngClass]="(form.get('title')?.value?.length || 0) > 110 ? 'text-red-400' : 'text-slate-400'">
-              {{ form.get('title')?.value?.length || 0 }} / 120
-            </span>
-          </div>
+      <!-- Top Black Card: Meta Info -->
+      <div class="bg-slate-900 rounded-2xl shadow-md p-8 flex flex-col gap-6">
+        <!-- Title Input -->
+        <div>
+          <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-3">Başlık</label>
           <input formControlName="title"
-            class="w-full text-2xl md:text-3xl font-black text-slate-800 placeholder-slate-300 bg-transparent border-0 border-b-2 border-slate-100 focus:border-cyan-400 focus:ring-0 px-0 py-3 transition-all outline-none"
-            style="font-family:'Outfit',sans-serif;"
-            placeholder="Etkileyici bir başlık yazın...">
+            class="w-full text-2xl font-bold text-white placeholder-slate-500 bg-transparent border-none focus:ring-0 p-0 outline-none transition-all"
+            placeholder="Makale başlığını buraya yazın...">
+          <div class="mt-3 flex items-center gap-3">
+            <div class="h-px flex-1 bg-white/10"></div>
+            <span class="text-[10px] text-slate-400">{{ form.get('title')?.value?.length || 0 }} / 120</span>
+          </div>
         </div>
 
-        <!-- Özet -->
-        <div class="relative z-10">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kısa Özet</label>
-            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ form.get('summary')?.value?.length || 0 }} / 400</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-white/10">
+          <!-- Category -->
+          <div>
+            <label class="text-[10px] font-medium text-slate-400 block mb-2">Kategori</label>
+            <div class="relative">
+              <select formControlName="categoryId"
+                class="w-full bg-white/5 border border-white/10 text-slate-300 text-[13px] py-2.5 pl-4 pr-10 rounded-xl focus:outline-none focus:border-white/20 transition-all appearance-none cursor-pointer">
+                <option [ngValue]="null" disabled>Seçin...</option>
+                @for (c of categories(); track c.id) {
+                  <option [ngValue]="c.id">{{ c.name }}</option>
+                }
+              </select>
+              <span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none">expand_more</span>
+            </div>
           </div>
-          <textarea formControlName="summary" rows="4"
-            class="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-[15px] focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 focus:bg-white outline-none transition-all resize-none leading-[1.8] font-serif shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
-            placeholder="Okuyucular için makalenizi özetleyen kısa bir giriş metni..."></textarea>
+
+          <!-- Stats -->
+          <div>
+            <label class="text-[10px] font-medium text-slate-400 block mb-2">İstatistikler</label>
+            <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
+              <span class="flex items-center gap-1.5 text-[12px] text-slate-300 font-medium">
+                <span class="material-symbols-rounded text-[16px] text-slate-400">timer</span>
+                ~{{ readTime }} dk
+              </span>
+              <div class="w-px h-4 bg-white/10"></div>
+              <span class="flex items-center gap-1.5 text-[12px] text-slate-300 font-medium">
+                <span class="material-symbols-rounded text-[16px] text-slate-400">format_size</span>
+                {{ wordCount }} kelime
+              </span>
+            </div>
+          </div>
+
+          <!-- Update Date -->
+          <div>
+            <label class="text-[10px] font-medium text-slate-400 block mb-2">Son Güncelleme</label>
+            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 h-[42px]">
+              <span class="material-symbols-rounded text-[16px] text-slate-400">calendar_today</span>
+              <span class="text-[12px] text-slate-300 font-medium">{{ article().updatedAt | date:'dd MMM yyyy, HH:mm' }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- İçerik Editörü Kartı -->
-      <div class="bg-white rounded-[3rem] border border-white shadow-[0_15px_50px_rgba(0,0,0,0.03)] p-8 sm:p-12 relative group">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-purple-50 transition-colors duration-500"></div>
+      <!-- Content Editor -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col min-h-[600px]">
+        <!-- Toolbar row -->
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-50 dark:border-slate-700 py-3 px-8 flex items-center justify-between sticky top-[56px] z-30">
+          <label class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tam Metin</label>
 
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center shadow-sm border border-purple-100">
-              <span class="material-symbols-rounded text-purple-600 text-[24px]">edit_note</span>
+          @if (isEditable) {
+            <div class="flex items-center gap-0.5">
+              <!-- Formatting Buttons -->
+              <button type="button" (mousedown)="$event.preventDefault(); format('formatBlock', 'h2')"
+                class="w-8 h-8 rounded flex items-center justify-center text-[13px] font-bold transition-colors"
+                [ngClass]="isFormatActive('formatBlock', 'h2') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                H2
+              </button>
+              <button type="button" (mousedown)="$event.preventDefault(); format('formatBlock', 'h3')"
+                class="w-8 h-8 rounded flex items-center justify-center text-[12px] font-bold transition-colors"
+                [ngClass]="isFormatActive('formatBlock', 'h3') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                H3
+              </button>
+              <div class="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-2"></div>
+              <button type="button" (mousedown)="$event.preventDefault(); format('bold')"
+                class="w-8 h-8 rounded flex items-center justify-center text-[14px] font-bold transition-colors"
+                [ngClass]="isFormatActive('bold') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                B
+              </button>
+              <button type="button" (mousedown)="$event.preventDefault(); format('italic')"
+                class="w-8 h-8 rounded flex items-center justify-center text-[14px] italic font-serif transition-colors"
+                [ngClass]="isFormatActive('italic') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                I
+              </button>
+              <button type="button" (mousedown)="$event.preventDefault(); format('underline')"
+                class="w-8 h-8 rounded flex items-center justify-center text-[14px] underline transition-colors"
+                [ngClass]="isFormatActive('underline') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                U
+              </button>
+              <div class="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-2"></div>
+              <button type="button" (mousedown)="$event.preventDefault(); format('insertUnorderedList')"
+                class="w-8 h-8 rounded flex items-center justify-center transition-colors"
+                [ngClass]="isFormatActive('insertUnorderedList') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                <span class="material-symbols-rounded text-[18px]">format_list_bulleted</span>
+              </button>
+              <button type="button" (mousedown)="$event.preventDefault(); format('insertOrderedList')"
+                class="w-8 h-8 rounded flex items-center justify-center transition-colors"
+                [ngClass]="isFormatActive('insertOrderedList') ? 'bg-slate-900 text-white' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-50'">
+                <span class="material-symbols-rounded text-[18px]">format_list_numbered</span>
+              </button>
             </div>
-            <div>
-              <h2 class="text-lg font-bold text-slate-800" style="font-family: 'Outfit', sans-serif;">Makale İçeriği</h2>
-              <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Tam Metin</p>
-            </div>
-          </div>
-          <!-- Kelime Sayacı -->
-          <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-full shadow-sm">
-            <span class="material-symbols-rounded text-slate-400 text-[18px]">format_align_left</span>
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ wordCount }} Kelime</span>
-          </div>
-        </div>
-
-        <textarea formControlName="content"
-          class="w-full text-[17px] leading-[1.9] text-slate-700 placeholder-slate-300 bg-transparent border-0 focus:ring-0 p-0 resize-none font-serif outline-none min-h-[520px] relative z-10"
-          style="field-sizing: content"
-          placeholder="Makalenizi buraya yazmaya başlayın. İçeriğinizi anlatın, açıklayın..."></textarea>
-
-        <!-- Alt Bar: İstatistik -->
-        <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-100 relative z-10">
-          <div class="flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-slate-400">
-            <span class="flex items-center gap-1.5">
-              <span class="material-symbols-rounded text-[16px]">timer</span>
-              ~{{ readTime }} dk okuma
-            </span>
-            <span class="flex items-center gap-1.5">
-              <span class="material-symbols-rounded text-[16px]">format_size</span>
-              {{ charCount }} karakter
-            </span>
-          </div>
-          @if (!isEditable) {
-            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
-              <span class="material-symbols-rounded text-[14px]">lock</span>
-              Düzenleme Kilitli
-            </span>
           }
         </div>
-      </div>
 
-      <!-- Mobil: Aksiyon Butonları -->
-      @if (isEditable) {
-        <div class="flex flex-col sm:hidden gap-3 pb-6">
-          <button type="button" (click)="publish()" [disabled]="form.invalid || loading()"
-            class="w-full flex items-center justify-center gap-2 py-4 rounded-full bg-cyan-600 text-white text-sm font-bold hover:bg-cyan-700 transition-all shadow-lg shadow-cyan-600/25 disabled:opacity-40">
-            <span class="material-symbols-rounded text-[20px]">send</span>
-            Yayıma Gönder
-          </button>
-          <button type="button" (click)="saveDraft()" [disabled]="loading()"
-            class="w-full flex items-center justify-center gap-2 py-4 rounded-full border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition-all disabled:opacity-40">
-            <span class="material-symbols-rounded text-[20px]">save</span>
-            Taslağı Kaydet
-          </button>
-        </div>
-      }
-    </section>
-
-    <!-- Sağ Kenar Çubuğu (1/3) -->
-    <aside class="flex flex-col gap-8">
-
-      <!-- Yayın Ayarları -->
-      <div class="bg-white rounded-[2.5rem] border border-white shadow-[0_15px_50px_rgba(0,0,0,0.03)] p-8">
-        <div class="flex items-center gap-3 mb-8">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center shadow-sm border border-emerald-100">
-            <span class="material-symbols-rounded text-emerald-600 text-[24px]">tune</span>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold text-slate-800" style="font-family: 'Outfit', sans-serif;">Yayın Ayarları</h3>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Durum ve Kategori</p>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-6">
-          <!-- Durum Göstergesi -->
-          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-[1.5rem] border border-slate-100 shadow-sm">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Mevcut Durum</span>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border" [ngClass]="{
-              'bg-slate-50 text-slate-600 border-slate-200': article().status === 0,
-              'bg-blue-50 text-blue-700 border-blue-200': article().status === 1,
-              'bg-amber-50 text-amber-700 border-amber-200': article().status === 2,
-              'bg-emerald-50 text-emerald-700 border-emerald-200': article().status === 3,
-              'bg-red-50 text-red-700 border-red-200': article().status === 4,
-              'bg-orange-50 text-orange-700 border-orange-200': article().status === 5
-            }">
-              <span class="w-1.5 h-1.5 rounded-full mr-1" [ngClass]="{
-                'bg-slate-400': article().status === 0,
-                'bg-blue-500': article().status === 1,
-                'bg-amber-500': article().status === 2,
-                'bg-emerald-500': article().status === 3,
-                'bg-red-500': article().status === 4,
-                'bg-orange-500': article().status === 5
-              }"></span>
-              {{ statusText(article().status) }}
-            </span>
-          </div>
-
-          <!-- Kategori -->
-          <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Kategori</label>
-            <select formControlName="categoryId"
-              class="w-full appearance-none bg-slate-50/50 border border-slate-200 text-slate-800 text-sm font-medium py-3 px-5 rounded-2xl focus:outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 cursor-pointer transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-              <option [ngValue]="null" disabled>Kategori Seçin</option>
-              @for (c of categories; track c.id) {
-                <option [ngValue]="c.id">{{ c.name }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Etiketler -->
-          <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Etiketler</label>
-            <input formControlName="tags"
-              class="w-full bg-slate-50/50 border border-slate-200 text-slate-800 text-sm font-medium py-3 px-5 rounded-2xl focus:outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 placeholder-slate-400 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
-              placeholder="örn. teknoloji, yazılım">
-            <p class="text-[11px] font-medium text-slate-400 mt-2">Virgülle ayırarak birden fazla ekleyin.</p>
+        <div class="p-8 md:p-10 flex-1 flex flex-col">
+          <div class="relative flex-1">
+            <div #editor
+                 [attr.contenteditable]="isEditable"
+                 (input)="onEditorInput($event)"
+                 (mouseup)="updateActiveFormats()"
+                 (keyup)="updateActiveFormats()"
+                 (keydown)="onEditorKeydown($event)"
+                 class="outline-none text-slate-700 dark:text-slate-200 text-[17px] leading-[1.8] font-serif min-h-[450px] pb-20 focus:ring-0"
+                 style="font-family: 'Georgia', serif;"></div>
           </div>
         </div>
       </div>
 
-      <!-- Makale Özet Bilgileri (Sadece Okuma) -->
-      <div class="bg-white rounded-[2.5rem] border border-white shadow-[0_15px_50px_rgba(0,0,0,0.03)] p-8">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100">
-            <span class="material-symbols-rounded text-slate-400 text-[20px]">info</span>
-          </div>
-          <div>
-            <h3 class="font-bold text-slate-800 text-[15px]" style="font-family: 'Outfit', sans-serif;">Detaylar</h3>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sistem Bilgileri</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center justify-between text-sm py-2 border-b border-slate-50">
-            <span class="text-slate-500 font-medium flex items-center gap-2">
-              <span class="material-symbols-rounded text-[18px] text-slate-400">schedule</span>Son Güncelleme
-            </span>
-            <span class="font-bold text-slate-700 text-xs">{{ article().updatedAt | date:'dd MMM yyyy, HH:mm' }}</span>
-          </div>
-          <div class="flex items-center justify-between text-sm py-2 border-b border-slate-50">
-            <span class="text-slate-500 font-medium flex items-center gap-2">
-              <span class="material-symbols-rounded text-[18px] text-slate-400">format_align_left</span>Kelime Sayısı
-            </span>
-            <span class="font-bold text-slate-700 text-xs">{{ wordCount }}</span>
-          </div>
-          <div class="flex items-center justify-between text-sm py-2 border-b border-slate-50">
-            <span class="text-slate-500 font-medium flex items-center gap-2">
-              <span class="material-symbols-rounded text-[18px] text-slate-400">timer</span>Okuma Süresi
-            </span>
-            <span class="font-bold text-slate-700 text-xs">~{{ readTime }} dk</span>
-          </div>
-          <div class="flex items-center justify-between text-sm py-2">
-            <span class="text-slate-500 font-medium flex items-center gap-2">
-              <span class="material-symbols-rounded text-[18px] text-slate-400">category</span>Kategori
-            </span>
-            <span class="font-bold text-slate-700 text-xs">{{ article().category || '—' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Süreç Geçmişi -->
+      <!-- Reviews / History -->
       @if (reviews.length > 0) {
-        <div class="bg-white rounded-[2.5rem] border border-white shadow-[0_15px_50px_rgba(0,0,0,0.03)] p-8">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shadow-sm border border-blue-100">
-              <span class="material-symbols-rounded text-blue-600 text-[24px]">history_toggle_off</span>
-            </div>
-            <div>
-              <h3 class="text-lg font-bold text-slate-800" style="font-family: 'Outfit', sans-serif;">Süreç Geçmişi</h3>
-              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ reviews.length }} İşlem Kaydı</p>
-            </div>
-          </div>
-
-          <div class="relative pl-6">
-            <!-- Timeline Çizgisi -->
-            <div class="absolute left-2.5 top-2 bottom-2 w-[2px] bg-slate-100"></div>
-
-            <div class="flex flex-col gap-8">
-              @for (r of reviews; track r.id) {
-                <div class="relative">
-                  <!-- Timeline Nokta -->
-                  <div class="absolute -left-[27px] top-1.5 w-3.5 h-3.5 rounded-full ring-4 ring-white shadow-sm"
-                    [ngClass]="{
-                      'bg-emerald-500': r.action === 2,
-                      'bg-cyan-500': r.action === 1,
-                      'bg-red-500': r.action === 3,
-                      'bg-orange-500': r.action === 4
-                    }"></div>
-
-                  <div class="flex flex-col gap-2">
-                    <span class="text-[15px] font-bold text-slate-800">{{ actionText(r.action) }}</span>
-                    <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-                      <span class="material-symbols-rounded text-[14px]">schedule</span>
-                      {{ r.createdAt | date:'dd MMM yyyy, HH:mm' }}
-                    </span>
-
-                    <!-- Durum Geçişi -->
-                    <div class="inline-flex items-center gap-2 mt-1">
-                      <span class="text-[10px] uppercase font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">{{ statusText(r.fromStatus) }}</span>
-                      <span class="material-symbols-rounded text-slate-300 text-[16px]">arrow_right_alt</span>
-                      <span class="text-[10px] uppercase font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">{{ statusText(r.toStatus) }}</span>
-                    </div>
-
-                    @if (r.note) {
-                      <div class="bg-blue-50/50 border border-blue-100/60 p-4 rounded-2xl text-[13px] text-blue-900 mt-2 leading-relaxed shadow-sm">
-                        <span class="font-black block mb-1 text-blue-600 uppercase tracking-widest text-[10px]">Editör Notu</span>
-                        {{ r.note }}
-                      </div>
-                    }
-                    @if (r.reason) {
-                      <div class="bg-red-50/50 border border-red-100/60 p-4 rounded-2xl text-[13px] text-red-900 mt-2 leading-relaxed shadow-sm">
-                        <span class="font-black block mb-1 text-red-600 uppercase tracking-widest text-[10px]">İade/Ret Nedeni</span>
-                        {{ r.reason }}
-                      </div>
-                    }
-                  </div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-8">
+          <h3 class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">Değerlendirme Geçmişi</h3>
+          <div class="flex flex-col gap-4">
+            @for (r of reviews; track r.id) {
+              <div class="rounded-xl border border-slate-100 dark:border-slate-700 p-5 bg-slate-50/50 dark:bg-slate-800/20">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[13px] font-bold text-slate-800 dark:text-slate-100">{{ actionText(r.action) }}</span>
+                  <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                    <span class="material-symbols-rounded text-[14px]">history</span>
+                    {{ r.createdAt | date:'dd.MM.yyyy HH:mm' }}
+                  </span>
                 </div>
-              }
-            </div>
+                @if (r.note || r.reason) {
+                  <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
+                    <p class="text-[13px] text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                      "{{ r.note || r.reason }}"
+                    </p>
+                  </div>
+                }
+              </div>
+            }
           </div>
         </div>
       }
 
-    </aside>
+    </div>
   </form>
+
 </div>
 }

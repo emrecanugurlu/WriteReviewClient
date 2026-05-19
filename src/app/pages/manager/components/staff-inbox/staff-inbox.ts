@@ -1,18 +1,18 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {PageResult} from '../../../../entities/interfaces/page-result';
 import {ArticleService} from '../../../../services/article/article-service';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgClass} from '@angular/common';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {debounceTime, distinctUntilChanged} from 'rxjs';
 import {MatButton} from '@angular/material/button';
 import {MatDialog} from '@angular/material/dialog';
-import SetExpertsDialog from '../../../../views/set-experts-dialog/set-experts-dialog';
 import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-staff-inbox',
   imports: [
     DatePipe,
+    NgClass,
     ReactiveFormsModule,
     MatButton,
   ],
@@ -86,25 +86,7 @@ export default class StaffInbox implements OnInit {
   }
 
   openAction(id: string, type: 'review'|'approve'|'reject'|'revreq'){
-    this.dialog.open(SetExpertsDialog,{data: {articleId:id}})
-
-
-    /*this.actionForId = id;
-    this.actionType = type;
-    this.submitting = false;
-
-    this.actionForm.reset({ note: '', reason: '' });
-    const noteCtrl = this.actionForm.get('note')!;
-    const reasonCtrl = this.actionForm.get('reason')!;
-    noteCtrl.clearValidators(); reasonCtrl.clearValidators();
-
-    if (type === 'reject') {
-      reasonCtrl.setValidators([Validators.required, Validators.minLength(3)]);
-    } else {
-      noteCtrl.setValidators([Validators.required, Validators.minLength(3)]);
-    }
-    noteCtrl.updateValueAndValidity();
-    reasonCtrl.updateValueAndValidity();*/
+    this.router.navigate(['/assign-experts', id]);
   }
 
   cancelAction(){ this.actionForId = null; this.actionType = null; }

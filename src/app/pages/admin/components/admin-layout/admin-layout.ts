@@ -1,13 +1,10 @@
-import { Component, inject } from '@angular/core';
-import {MatSidenav, MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
-import {MatListItem, MatNavList} from '@angular/material/list';
-import {MatIcon} from '@angular/material/icon';
-import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {MatToolbar} from '@angular/material/toolbar';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {MatMenuModule} from '@angular/material/menu';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatNavList } from '@angular/material/list';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth-service';
+import { ThemeService } from '../../../../services/theme/theme-service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -15,22 +12,27 @@ import { AuthService } from '../../../../services/auth/auth-service';
     MatSidenav,
     MatSidenavContainer,
     MatNavList,
-    MatIcon,
     RouterLink,
     RouterLinkActive,
     MatSidenavContent,
-    MatToolbar,
-    RouterOutlet,
-    MatIconButton,
-    MatButton,
-    MatMenuModule
+    RouterOutlet
   ],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.scss'
 })
-export class AdminLayout {
+export class AdminLayout implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
+  themeService = inject(ThemeService);
+
+  adminName = signal('Admin');
+
+  ngOnInit() {
+    this.authService.getMe().subscribe({
+      next: (me) => this.adminName.set(me.fullName),
+      error: () => {}
+    });
+  }
 
   logout() {
     this.authService.logout();

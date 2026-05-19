@@ -98,8 +98,7 @@ export class MyArticles implements OnInit {
     return this.myArticles().filter(article => {
       const term = this.searchTerm ? this.searchTerm.toLowerCase() : '';
       const matchesSearch = !term ||
-        (article.title && article.title.toLowerCase().includes(term)) ||
-        (article.summary && article.summary.toLowerCase().includes(term));
+        (article.title && article.title.toLowerCase().includes(term));
 
       let matchesFilter = true;
       if (this.activeFilter === 'published') matchesFilter = article.status === 3;

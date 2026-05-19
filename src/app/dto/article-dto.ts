@@ -4,7 +4,7 @@ export type ArticleDto = {
   id: string,
   title: string,
   content: string,
-  summary: string,
+  categoryId: string,
   category: string,
   authorName: string,
   status: ArticleStatus,

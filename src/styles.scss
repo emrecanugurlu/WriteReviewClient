@@ -5,13 +5,14 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 
 html {
   @include mat.theme((color: (primary: mat.$cyan-palette,
         tertiary: mat.$red-palette,
       ),
-      typography: Roboto,
+      typography: 'Plus Jakarta Sans',
       density: 0,
     ));
 }
@@ -35,8 +36,9 @@ body {
 
 body {
   width: 100%;
-  background: linear-gradient(135deg, #e4e7e8, #ffffff);
-  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb; /* Slate 50 / Gray 50 */
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #111827; /* Gray 900 */
 }
 
 /* You can add global styles to this file, and also import other style files */
@@ -48,29 +50,121 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* ── Modern Dialog Panel ── */
+/* ── Dark Mode — Angular Material & Global ── */
+body.dark {
+  background-color: #0f172a;
+  color: #f1f5f9;
+
+  /* Angular Material dark token overrides */
+  --mat-sys-surface: #1e293b;
+  --mat-sys-on-surface: #f1f5f9;
+  --mat-sys-surface-variant: #334155;
+  --mat-sys-on-surface-variant: #94a3b8;
+  --mat-sys-outline: #475569;
+  --mat-sys-outline-variant: #334155;
+  --mat-sys-background: #0f172a;
+  --mat-sys-on-background: #f1f5f9;
+}
+
+/* ── Modern / Experts Dialog Panel ── */
 .modern-dialog .mat-mdc-dialog-container {
-  --mdc-dialog-container-shape: 2rem;
+  --mdc-dialog-container-shape: 1.25rem;
   padding: 0 !important;
   overflow: hidden;
-  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(0, 0, 0, 0.10);
+  box-shadow:
+    0 32px 64px -12px rgba(0, 0, 0, 0.18),
+    0 12px 24px -8px rgba(0, 0, 0, 0.1);
 }
 
 .modern-dialog .mat-mdc-dialog-surface {
-  border-radius: 2rem !important;
+  border-radius: 1.25rem !important;
   overflow: hidden;
+  padding: 0 !important;
+  background: white !important;
+  box-shadow: none !important;
+}
+
+body.dark .modern-dialog .mat-mdc-dialog-surface {
+  background: #1e293b !important;
+}
+
+.modern-dialog .mat-mdc-dialog-content,
+.modern-dialog .mdc-dialog__content {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-height: unset !important;
+  overflow: visible !important;
 }
 
 .cdk-overlay-backdrop.cdk-overlay-dark-backdrop {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .cdk-global-overlay-wrapper {
   align-items: center !important;
   justify-content: center !important;
+}
+
+/* ── App Menu Panel ── */
+.app-menu .mat-mdc-menu-surface {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #f1f5f9;
+  min-width: 160px !important;
+}
+
+.app-menu .mat-mdc-menu-content {
+  padding: 4px 0 !important;
+}
+
+.app-menu .mat-mdc-menu-item {
+  font-size: 13px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  border-radius: 8px !important;
+  margin: 0 4px !important;
+  width: calc(100% - 8px) !important;
+}
+
+.app-menu .mat-mdc-menu-item.text-red-600 {
+  color: #dc2626 !important;
+}
+
+.app-menu .mat-mdc-menu-item.text-red-600:hover {
+  background-color: #fef2f2 !important;
+}
+
+body.dark .app-menu .mat-mdc-menu-surface {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark .app-menu .mat-mdc-menu-item {
+  color: #cbd5e1 !important;
+}
+
+body.dark .app-menu .mat-mdc-menu-item:hover {
+  background-color: #334155 !important;
+}
+
+body.dark .app-menu .mat-mdc-menu-item.text-red-600 {
+  color: #f87171 !important;
+}
+
+body.dark .app-menu .mat-mdc-menu-item.text-red-600:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
